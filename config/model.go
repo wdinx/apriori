@@ -1,7 +1,8 @@
 package config
 
 type Config struct {
-	Database Database
+	Database           Database
+	DigitalOceanSpaces DigitalOceanSpaces
 }
 
 type Database struct {
@@ -10,4 +11,11 @@ type Database struct {
 	DBHost string
 	DBPort string
 	DBName string
+}
+type DigitalOceanSpaces struct {
+	AccessToken string
+	SecretKey   string
+	Region      string
+	Name        string
+	Endpoint    string
 }
