@@ -1,7 +1,9 @@
 name: Deploy
 
-on: [push]
-branch: [master]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build-image:
