@@ -18,7 +18,7 @@ func main() {
 	db := config.InitDB(cfg.Database)
 	route.InitRoute(db, e, validate, cfg)
 
-	err := e.Start(":3000")
+	err := e.Start(":3007")
 	if err != nil {
 		panic(err)
 	}
