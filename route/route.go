@@ -17,22 +17,34 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	userRepository := repository.NewUserRepository(db)
 	imageRepository := repository.NewImageRepository(config.DigitalOceanSpaces)
 	productRepository := repository.NewProductRepository(db)
+	transactionRepository := repository.NewTransactionRepository(db)
 
 	userService := service.NewUserService(userRepository, validate)
 	imageService := service.NewImageService(imageRepository)
 	productService := service.NewProductService(productRepository, imageService, validate)
+	transactionService := service.NewTransactionService(transactionRepository, validate)
 
 	userController := controller.NewUserController(userService)
 	productController := controller.NewProductController(productService)
+	transactionController := controller.NewTransactionController(transactionService)
 
 	e.POST("/login", userController.Login)
 	e.POST("/register", userController.Register)
 
-	product := e.Group("user")
-	product.Use(echojwt.JWT([]byte(constant.SECRET_JWT)))
-	product.GET("/products", productController.GetAll)
-	product.GET("/product/:id", productController.GetByID)
-	product.POST("/product", productController.Create)
-	product.PUT("/product/:id", productController.Update)
-	product.DELETE("/product/:id", productController.Delete)
+	router := e.Group("user")
+	router.Use(echojwt.JWT([]byte(constant.SECRET_JWT)))
+
+	// Route
+	router.GET("/products", productController.GetAll)
+	router.GET("/product/:id", productController.GetByID)
+	router.POST("/product", productController.Create)
+	router.PUT("/product/:id", productController.Update)
+	router.DELETE("/product/:id", productController.Delete)
+
+	// Transaction
+	router.GET("/transactions", transactionController.GetAll)
+	router.GET("/transaction/:id", transactionController.GetById)
+	router.POST("/transaction", transactionController.Create)
+	router.PUT("/transaction/:id", transactionController.Update)
+	router.DELETE("/transaction/:id", transactionController.Delete)
 }

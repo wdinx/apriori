@@ -17,7 +17,7 @@ func NewProductController(productService service.ProductService) ProductControll
 	return &ProductControllerImpl{productService: productService}
 }
 
-func (controller ProductControllerImpl) Create(c echo.Context) error {
+func (controller *ProductControllerImpl) Create(c echo.Context) error {
 	var request web.ProductCreateRequest
 	err := c.Bind(&request)
 	if err != nil {
@@ -36,7 +36,7 @@ func (controller ProductControllerImpl) Create(c echo.Context) error {
 	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("product created successfully", nil))
 }
 
-func (controller ProductControllerImpl) Update(c echo.Context) error {
+func (controller *ProductControllerImpl) Update(c echo.Context) error {
 	var request web.ProductUpdateRequest
 
 	strId := c.Param("id")
@@ -63,7 +63,7 @@ func (controller ProductControllerImpl) Update(c echo.Context) error {
 	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("product updated successfully", nil))
 }
 
-func (controller ProductControllerImpl) Delete(c echo.Context) error {
+func (controller *ProductControllerImpl) Delete(c echo.Context) error {
 	strId := c.Param("id")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
@@ -76,7 +76,7 @@ func (controller ProductControllerImpl) Delete(c echo.Context) error {
 	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("product deleted successfully", nil))
 }
 
-func (controller ProductControllerImpl) GetByID(c echo.Context) error {
+func (controller *ProductControllerImpl) GetByID(c echo.Context) error {
 	strId := c.Param("id")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
@@ -89,7 +89,7 @@ func (controller ProductControllerImpl) GetByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("product retrieved successfully", product))
 }
 
-func (controller ProductControllerImpl) GetAll(c echo.Context) error {
+func (controller *ProductControllerImpl) GetAll(c echo.Context) error {
 	products, err := controller.productService.GetAll()
 	if err != nil {
 		return c.JSON(exception.ErrorHandler(err), web.NewBaseErrorResponse(err.Error()))
