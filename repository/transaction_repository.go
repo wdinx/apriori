@@ -8,4 +8,5 @@ type TransactionRepository interface {
 	Delete(id int) error
 	FindById(id int) (*domain.Transaction, error)
 	FindAll() (*[]domain.Transaction, error)
+	FindByDateRange(startDate string, endDate string) (*[]domain.Transaction, error)
 }

@@ -47,3 +47,10 @@ func (repository *TransactionRepositoryImpl) FindAll() (transactions *[]domain.T
 	}
 	return transactions, nil
 }
+
+func (repository *TransactionRepositoryImpl) FindByDateRange(startDate string, endDate string) (transactions *[]domain.Transaction, err error) {
+	if err = repository.db.Where("date BETWEEN ? AND ?", startDate, endDate).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}

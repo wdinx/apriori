@@ -4,6 +4,7 @@ go 1.22
 
 require (
 	github.com/aws/aws-sdk-go v1.53.6
+	github.com/eMAGTechLabs/go-apriori v1.0.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/joho/godotenv v1.5.1

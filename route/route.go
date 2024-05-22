@@ -23,10 +23,12 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	imageService := service.NewImageService(imageRepository)
 	productService := service.NewProductService(productRepository, imageService, validate)
 	transactionService := service.NewTransactionService(transactionRepository, validate)
+	aprioriService := service.NewAprioriService(transactionRepository, validate)
 
 	userController := controller.NewUserController(userService)
 	productController := controller.NewProductController(productService)
 	transactionController := controller.NewTransactionController(transactionService)
+	aprioriController := controller.NewAprioriController(aprioriService)
 
 	e.POST("/login", userController.Login)
 	e.POST("/register", userController.Register)
@@ -47,4 +49,7 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	router.POST("/transaction", transactionController.Create)
 	router.PUT("/transaction/:id", transactionController.Update)
 	router.DELETE("/transaction/:id", transactionController.Delete)
+
+	// Apriori
+	router.POST("/apriori", aprioriController.Apriori)
 }
