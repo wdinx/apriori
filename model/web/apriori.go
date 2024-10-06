@@ -19,3 +19,19 @@ type OrderedStatistic struct {
 	Confidence float64  `json:"confidence"`
 	Lift       float64  `json:"lift"`
 }
+
+//type AprioriBaseResponse struct {
+//	FrequentItemset *[]FrequentItemset `json:"frequent_itemset"`
+//	AssociationRule *[]AssociationRule `json:"association_rule"`
+//	Recommendation  *[]Recommendation  `json:"recommendation"`
+//	DecisionSupport *DecisionSupport   `json:"decision_support"`
+//}
+
+type AprioriBaseResponse struct {
+	ItemsetSatu        []ItemsetSatu        `json:"itemset_satu"`
+	ItemsetDua         []ItemsetDua         `json:"itemset_dua"`
+	ItemsetTiga        []ItemsetTiga        `json:"itemset_tiga"`
+	RuleAssociation    []RuleAssociation    `json:"rule_association"`
+	ConfidanceItemset2 []ConfidanceItemset2 `json:"confidance_itemset_2"`
+	ConfidanceItemset3 []ConfidanceItemset3 `json:"confidance_itemset_3"`
+}

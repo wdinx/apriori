@@ -2,12 +2,10 @@ package route
 
 import (
 	"apriori-backend/config"
-	"apriori-backend/constant"
 	"apriori-backend/controller"
 	"apriori-backend/repository"
 	"apriori-backend/service"
 	"github.com/go-playground/validator/v10"
-	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -34,7 +32,7 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	e.POST("/register", userController.Register)
 
 	router := e.Group("user")
-	router.Use(echojwt.JWT([]byte(constant.SECRET_JWT)))
+	//router.Use(echojwt.JWT([]byte(constant.SECRET_JWT)))
 
 	// Route
 	router.GET("/products", productController.GetAll)

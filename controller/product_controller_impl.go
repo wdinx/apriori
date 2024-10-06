@@ -4,6 +4,7 @@ import (
 	"apriori-backend/exception"
 	"apriori-backend/model/web"
 	"apriori-backend/service"
+	"apriori-backend/util"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
@@ -20,6 +21,7 @@ func NewProductController(productService service.ProductService) ProductControll
 func (controller *ProductControllerImpl) Create(c echo.Context) error {
 	var request web.ProductCreateRequest
 	err := c.Bind(&request)
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse(err.Error()))
 	}
@@ -90,7 +92,10 @@ func (controller *ProductControllerImpl) GetByID(c echo.Context) error {
 }
 
 func (controller *ProductControllerImpl) GetAll(c echo.Context) error {
-	products, err := controller.productService.GetAll()
+	pageParam := c.QueryParam("page")
+	metadata := util.GetMetadata(pageParam)
+
+	products, err := controller.productService.GetAll(metadata)
 	if err != nil {
 		return c.JSON(exception.ErrorHandler(err), web.NewBaseErrorResponse(err.Error()))
 	}

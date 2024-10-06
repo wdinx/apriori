@@ -2,6 +2,7 @@ package repository
 
 import (
 	"apriori-backend/model/domain"
+	"apriori-backend/model/web"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +14,11 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 	return &ProductRepositoryImpl{db: db}
 }
 
-func (repository *ProductRepositoryImpl) GetAll() (products *[]domain.Product, err error) {
+func (repository *ProductRepositoryImpl) GetAll(metadata *web.Metadata) (products *[]domain.Product, err error) {
+	// Get Pagination from all products
+	if err = repository.db.Limit(metadata.Limit).Offset(metadata.Offset()).Find(&products).Error; err != nil {
+		return nil, err
+	}
 	if err = repository.db.Find(&products).Error; err != nil {
 		return nil, err
 	}
@@ -46,4 +51,13 @@ func (repository *ProductRepositoryImpl) Delete(id int) error {
 		return err
 	}
 	return nil
+}
+
+func (repository *ProductRepositoryImpl) GetTotalPage(limit int) (totalPage int, err error) {
+	var totalData int64
+	if err = repository.db.Model(&domain.Product{}).Count(&totalData).Error; err != nil {
+		return 0, err
+	}
+	totalPage = int(totalData) / limit
+	return totalPage, err
 }

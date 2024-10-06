@@ -22,8 +22,8 @@ func NewProductService(productRepository repository.ProductRepository, imageServ
 	}
 }
 
-func (service *ProductServiceImpl) GetAll() (*[]web.ProductResponse, error) {
-	products, err := service.productRepository.GetAll()
+func (service *ProductServiceImpl) GetAll(metadata *web.Metadata) (*[]web.ProductResponse, error) {
+	products, err := service.productRepository.GetAll(metadata)
 	if err != nil {
 		return nil, err
 	}

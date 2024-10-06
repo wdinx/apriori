@@ -5,7 +5,7 @@ import (
 )
 
 type ProductService interface {
-	GetAll() (*[]web.ProductResponse, error)
+	GetAll(metadata *web.Metadata) (*[]web.ProductResponse, error)
 	GetByID(id int) (*web.ProductResponse, error)
 	Create(product *web.ProductCreateRequest) error
 	Update(product *web.ProductUpdateRequest) error
