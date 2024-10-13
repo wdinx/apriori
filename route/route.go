@@ -4,6 +4,7 @@ import (
 	"apriori-backend/config"
 	"apriori-backend/constant"
 	"apriori-backend/controller"
+	"apriori-backend/middleware"
 	"apriori-backend/repository"
 	"apriori-backend/service"
 	"github.com/go-playground/validator/v10"
@@ -30,6 +31,8 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	productController := controller.NewProductController(productService, productRepository)
 	transactionController := controller.NewTransactionController(transactionService, productRepository)
 	aprioriController := controller.NewAprioriController(aprioriService, productRepository)
+
+	e.Use(middleware.CORSMiddleware())
 
 	e.POST("/login", userController.Login)
 	e.POST("/register", userController.Register)
