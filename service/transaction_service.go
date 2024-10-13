@@ -7,5 +7,5 @@ type TransactionService interface {
 	Update(request *web.UpdateTransactionRequest) error
 	Delete(id int) error
 	FindById(id int) (*web.TransactionResponse, error)
-	FindAll() (*[]web.TransactionResponse, error)
+	FindAll(metadata *web.Metadata) (*[]web.TransactionResponse, error)
 }

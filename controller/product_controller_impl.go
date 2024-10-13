@@ -2,7 +2,9 @@ package controller
 
 import (
 	"apriori-backend/exception"
+	"apriori-backend/model/domain"
 	"apriori-backend/model/web"
+	"apriori-backend/repository"
 	"apriori-backend/service"
 	"apriori-backend/util"
 	"github.com/labstack/echo/v4"
@@ -11,11 +13,15 @@ import (
 )
 
 type ProductControllerImpl struct {
-	productService service.ProductService
+	productService    service.ProductService
+	productRepository repository.ProductRepository
 }
 
-func NewProductController(productService service.ProductService) ProductController {
-	return &ProductControllerImpl{productService: productService}
+func NewProductController(productService service.ProductService, productRepository repository.ProductRepository) ProductController {
+	return &ProductControllerImpl{
+		productService:    productService,
+		productRepository: productRepository,
+	}
 }
 
 func (controller *ProductControllerImpl) Create(c echo.Context) error {
@@ -92,12 +98,13 @@ func (controller *ProductControllerImpl) GetByID(c echo.Context) error {
 }
 
 func (controller *ProductControllerImpl) GetAll(c echo.Context) error {
+	var err error
 	pageParam := c.QueryParam("page")
 	metadata := util.GetMetadata(pageParam)
-
+	metadata.TotalPage, err = controller.productRepository.GetTotalPage(&domain.Product{}, metadata.Limit)
 	products, err := controller.productService.GetAll(metadata)
 	if err != nil {
 		return c.JSON(exception.ErrorHandler(err), web.NewBaseErrorResponse(err.Error()))
 	}
-	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("products retrieved successfully", products))
+	return c.JSON(http.StatusOK, web.NewBaseSuccessPaginationResponse("products retrieved successfully", *metadata, products))
 }

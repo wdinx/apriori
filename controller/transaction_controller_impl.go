@@ -2,17 +2,23 @@ package controller
 
 import (
 	"apriori-backend/model/web"
+	"apriori-backend/repository"
 	"apriori-backend/service"
+	"apriori-backend/util"
 	"github.com/labstack/echo/v4"
 	"strconv"
 )
 
 type TransactionControllerImpl struct {
 	transactionService service.TransactionService
+	productRepository  repository.ProductRepository
 }
 
-func NewTransactionController(transactionService service.TransactionService) TransactionControllerImpl {
-	return TransactionControllerImpl{transactionService: transactionService}
+func NewTransactionController(transactionService service.TransactionService, productRepository repository.ProductRepository) TransactionControllerImpl {
+	return TransactionControllerImpl{
+		transactionService: transactionService,
+		productRepository:  productRepository,
+	}
 }
 
 func (controller *TransactionControllerImpl) Create(c echo.Context) error {
@@ -69,9 +75,12 @@ func (controller *TransactionControllerImpl) GetById(c echo.Context) error {
 }
 
 func (controller *TransactionControllerImpl) GetAll(c echo.Context) error {
-	transactions, err := controller.transactionService.FindAll()
+	page := c.QueryParam("page")
+	metadata := util.GetMetadata(page)
+	metadata.TotalPage, _ = controller.productRepository.GetTotalPage(&web.TransactionResponse{}, metadata.Limit)
+	transactions, err := controller.transactionService.FindAll(metadata)
 	if err != nil {
 		return c.JSON(500, web.NewBaseErrorResponse(err.Error()))
 	}
-	return c.JSON(200, web.NewBaseSuccessResponse("Get all transactions success", transactions))
+	return c.JSON(200, web.NewBaseSuccessPaginationResponse("Get all transactions success", *metadata, transactions))
 }

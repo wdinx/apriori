@@ -56,8 +56,8 @@ func (service *TransactionServiceImpl) FindById(id int) (*web.TransactionRespons
 	return converter.ToTransactionResponse(transaction), nil
 }
 
-func (service *TransactionServiceImpl) FindAll() (*[]web.TransactionResponse, error) {
-	transactions, err := service.transactionRepository.FindAll()
+func (service *TransactionServiceImpl) FindAll(metadata *web.Metadata) (*[]web.TransactionResponse, error) {
+	transactions, err := service.transactionRepository.FindAll(metadata)
 	if err != nil {
 		return nil, err
 	}

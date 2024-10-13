@@ -2,6 +2,7 @@ package repository
 
 import (
 	"apriori-backend/model/domain"
+	"apriori-backend/model/web"
 	"gorm.io/gorm"
 )
 
@@ -41,8 +42,8 @@ func (repository *TransactionRepositoryImpl) FindById(id int) (transaction *doma
 	return transaction, nil
 }
 
-func (repository *TransactionRepositoryImpl) FindAll() (transactions *[]domain.Transaction, err error) {
-	if err = repository.db.Find(&transactions).Error; err != nil {
+func (repository *TransactionRepositoryImpl) FindAll(metadata *web.Metadata) (transactions *[]domain.Transaction, err error) {
+	if err = repository.db.Limit(metadata.Limit).Offset(metadata.Offset()).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil

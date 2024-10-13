@@ -22,7 +22,6 @@ type BaseSuccessPaginationResponse struct {
 }
 
 func NewBaseSuccessPaginationResponse(message string, pagination Metadata, data interface{}) *BaseSuccessPaginationResponse {
-	pagination.Limit = 15
 	return &BaseSuccessPaginationResponse{
 		Error:      false,
 		Message:    message,

@@ -11,5 +11,5 @@ type ProductRepository interface {
 	Create(product *domain.Product) error
 	Update(product *domain.Product) error
 	Delete(id int) error
-	GetTotalPage(limit int) (int, error)
+	GetTotalPage(model any, limit int) (int, error)
 }

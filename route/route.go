@@ -27,9 +27,9 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	aprioriService := service.NewAprioriService(transactionRepository, aprioriRepository, validate)
 
 	userController := controller.NewUserController(userService)
-	productController := controller.NewProductController(productService)
-	transactionController := controller.NewTransactionController(transactionService)
-	aprioriController := controller.NewAprioriController(aprioriService)
+	productController := controller.NewProductController(productService, productRepository)
+	transactionController := controller.NewTransactionController(transactionService, productRepository)
+	aprioriController := controller.NewAprioriController(aprioriService, productRepository)
 
 	e.POST("/login", userController.Login)
 	e.POST("/register", userController.Register)
