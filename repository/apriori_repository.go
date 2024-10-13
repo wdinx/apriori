@@ -8,5 +8,6 @@ import (
 type AprioriRepository interface {
 	FindAll(metadata *web.Metadata) (*[]domain.AprioriResult, error)
 	Create(apriori *domain.AprioriResult) error
-	GetByID(id int) (*domain.AprioriResult, error)
+	GetByID(id string) (*domain.AprioriResult, error)
+	Delete(id string) error
 }

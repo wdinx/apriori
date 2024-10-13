@@ -3,5 +3,8 @@ package service
 import "apriori-backend/model/web"
 
 type AprioriService interface {
-	GetApriori(request *web.CreateAprioriRequest) (*web.AprioriBaseResponse, error)
+	ProcessApriori(request *web.CreateAprioriRequest) (*web.AprioriBaseResponse, error)
+	GetAll(metadata *web.Metadata) (*[]web.AprioriBaseResponse, error)
+	GetByID(id string) (*web.AprioriBaseResponse, error)
+	DeleteByID(id string) error
 }

@@ -28,6 +28,11 @@ type OrderedStatistic struct {
 //}
 
 type AprioriBaseResponse struct {
+	ID                 string               `json:"id"`
+	DateStart          string               `json:"date_start"`
+	DateEnd            string               `json:"date_end"`
+	MinSupport         float64              `json:"min_support"`
+	MinConfidence      float64              `json:"min_confidence"`
 	ItemsetSatu        []ItemsetSatu        `json:"itemset_satu"`
 	ItemsetDua         []ItemsetDua         `json:"itemset_dua"`
 	ItemsetTiga        []ItemsetTiga        `json:"itemset_tiga"`

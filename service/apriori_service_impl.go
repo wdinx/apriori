@@ -4,59 +4,85 @@ import (
 	"apriori-backend/model/domain"
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
+	"fmt"
 	Apriori "github.com/eMAGTechLabs/go-apriori"
 	"github.com/go-playground/validator/v10"
+	"strings"
 )
 
 type AprioriServiceImpl struct {
 	transactionRepository repository.TransactionRepository
+	aprioriRepository     repository.AprioriRepository
 	validator             *validator.Validate
 }
 
-func NewAprioriService(transactionRepository repository.TransactionRepository, validator *validator.Validate) AprioriService {
+func NewAprioriService(transactionRepository repository.TransactionRepository, aprioriRepository repository.AprioriRepository, validator *validator.Validate) AprioriService {
 	return &AprioriServiceImpl{
 		transactionRepository: transactionRepository,
+		aprioriRepository:     aprioriRepository,
 		validator:             validator,
 	}
 }
 
-func (service *AprioriServiceImpl) GetApriori(request *web.CreateAprioriRequest) (*web.AprioriBaseResponse, error) {
-	//if err := service.validator.Struct(request); err != nil {
-	//	return nil, err
-	//}
-	//result, err := service.transactionRepository.FindByDateRange(request.DateStart, request.DateEnd)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//var transaction [][]string
-	//
-	//for _, column := range *result {
-	//	newColumn := strings.Split(column.Items, ",")
-	//	for _, value := range newColumn {
-	//		split := strings.Split(value, ",")
-	//		transaction = append(transaction, split)
-	//	}
-	//}
-	//option := Apriori.NewOptions(request.MinSup, request.MinConf, 0., 0)
-	//apriori := Apriori.NewApriori(transaction[1:])
-	//aprioriResult := apriori.Calculate(option)
-
-	transactions := [][]string{
-		{"beer", "nuts", "cheese"},
-		{"beer", "nuts", "jam"},
-		{"beer", "butter"},
-		{"nuts", "cheese"},
-		{"beer", "nuts", "cheese", "jam"},
-		{"butter"},
-		{"beer", "nuts", "jam", "butter"},
-		{"jam"},
+func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequest) (*web.AprioriBaseResponse, error) {
+	if err := service.validator.Struct(request); err != nil {
+		return nil, err
+	}
+	result, err := service.transactionRepository.FindByDateRange(request.DateStart, request.DateEnd)
+	if err != nil {
+		return nil, err
 	}
 
-	apriori := Apriori.NewApriori(transactions)
-	aprioriResult := apriori.Calculate(Apriori.NewOptions(0.6, 0.6, 0.0, 0))
+	if len(*result) == 0 {
+		return nil, fmt.Errorf("Data Not Found")
+	}
+
+	var transaction [][]string
+
+	for _, column := range *result {
+		newColumn := strings.Split(column.Items, ",")
+		for _, value := range newColumn {
+			split := strings.Split(value, ",")
+			transaction = append(transaction, split)
+		}
+	}
+	option := Apriori.NewOptions(request.MinSup, request.MinConf, 0., 0)
+	apriori := Apriori.NewApriori(transaction[1:])
+	aprioriResult := apriori.Calculate(option)
 
 	var aprioriData domain.AprioriResult
-	proceedApriori := aprioriData.ProceedData(aprioriResult)
+	proceedApriori := aprioriData.ProceedData(aprioriResult, request)
+	if err = service.aprioriRepository.Create(proceedApriori); err != nil {
+		return nil, err
+	}
 	aprioriResponse := proceedApriori.ToResponse()
 	return aprioriResponse, nil
+}
+
+func (service *AprioriServiceImpl) GetAll(metadata *web.Metadata) (*[]web.AprioriBaseResponse, error) {
+	apriori, err := service.aprioriRepository.FindAll(metadata)
+
+	if err != nil {
+		return nil, err
+	}
+	var response []web.AprioriBaseResponse
+	for _, data := range *apriori {
+		response = append(response, *data.ToResponse())
+	}
+	return &response, nil
+}
+
+func (service *AprioriServiceImpl) GetByID(id string) (*web.AprioriBaseResponse, error) {
+	apriori, err := service.aprioriRepository.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return apriori.ToResponse(), nil
+}
+
+func (service *AprioriServiceImpl) DeleteByID(id string) error {
+	if err := service.aprioriRepository.Delete(id); err != nil {
+		return err
+	}
+	return nil
 }

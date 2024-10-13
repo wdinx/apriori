@@ -2,10 +2,12 @@ package route
 
 import (
 	"apriori-backend/config"
+	"apriori-backend/constant"
 	"apriori-backend/controller"
 	"apriori-backend/repository"
 	"apriori-backend/service"
 	"github.com/go-playground/validator/v10"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -16,12 +18,13 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	imageRepository := repository.NewImageRepository(config.DigitalOceanSpaces)
 	productRepository := repository.NewProductRepository(db)
 	transactionRepository := repository.NewTransactionRepository(db)
+	aprioriRepository := repository.NewAprioriRepository(db)
 
 	userService := service.NewUserService(userRepository, validate)
 	imageService := service.NewImageService(imageRepository)
 	productService := service.NewProductService(productRepository, imageService, validate)
 	transactionService := service.NewTransactionService(transactionRepository, validate)
-	aprioriService := service.NewAprioriService(transactionRepository, validate)
+	aprioriService := service.NewAprioriService(transactionRepository, aprioriRepository, validate)
 
 	userController := controller.NewUserController(userService)
 	productController := controller.NewProductController(productService)
@@ -32,7 +35,7 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	e.POST("/register", userController.Register)
 
 	router := e.Group("user")
-	//router.Use(echojwt.JWT([]byte(constant.SECRET_JWT)))
+	router.Use(echojwt.JWT([]byte(constant.SECRET_JWT)))
 
 	// Route
 	router.GET("/products", productController.GetAll)
@@ -49,5 +52,8 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	router.DELETE("/transaction/:id", transactionController.Delete)
 
 	// Apriori
-	router.POST("/apriori", aprioriController.Apriori)
+	e.POST("/apriori", aprioriController.Apriori)
+	e.GET("/apriori", aprioriController.GetAll)
+	e.GET("/apriori/:id", aprioriController.GetByID)
+	e.DELETE("/apriori/:id", aprioriController.DeleteByID)
 }

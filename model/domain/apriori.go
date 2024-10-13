@@ -16,8 +16,12 @@ type AprioriResult struct {
 	SupportRecord []SupportRecord `gorm:"foreignKey:AprioriID"`
 }
 
-func (a *AprioriResult) ProceedData(apriori []Apriori.RelationRecord) *AprioriResult {
+func (a *AprioriResult) ProceedData(apriori []Apriori.RelationRecord, request *web.CreateAprioriRequest) *AprioriResult {
 	a.ID = uuid.New().String()
+	a.DateStart = request.DateStart
+	a.DateEnd = request.DateEnd
+	a.MinSupport = request.MinSup
+	a.MinConfidence = request.MinConf
 	var supportRecordID, orderedStatisticID uuid.UUID
 	for _, record := range apriori {
 		if len(record.GetSupportRecord().GetItems()) > 3 {
@@ -47,6 +51,13 @@ func (a *AprioriResult) ProceedData(apriori []Apriori.RelationRecord) *AprioriRe
 
 func (a *AprioriResult) ToResponse() *web.AprioriBaseResponse {
 	var response web.AprioriBaseResponse
+
+	response.ID = a.ID
+	response.DateStart = a.DateStart
+	response.DateEnd = a.DateEnd
+	response.MinSupport = a.MinSupport
+	response.MinConfidence = a.MinConfidence
+
 	for _, data := range a.SupportRecord {
 		itemset := strings.Split(data.Itemset, ",")
 		switch {
