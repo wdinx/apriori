@@ -9,7 +9,7 @@ func CORSMiddleware() echo.MiddlewareFunc {
 	corsMiddleware := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"}, // Mengizinkan semua origin
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{"Content-Type", "X-CSRF-Token"},
+		AllowedHeaders: []string{"Content-Type", "X-CSRF-Token", "Access-Control-Allow-Origin"},
 		Debug:          true,
 	})
 	return echo.WrapMiddleware(corsMiddleware.Handler)
