@@ -14,18 +14,18 @@ func NewImageService(imageRepository repository.ImageRepository) ImageService {
 	return &ImageServiceImpl{imageRepository: imageRepository}
 }
 
-func (service *ImageServiceImpl) UploadImage(image *multipart.FileHeader, filename string) error {
+func (service *ImageServiceImpl) UploadImage(image *multipart.FileHeader) (string, error) {
 	file, err := image.Open()
 	defer file.Close()
 
 	if err != nil {
-		return constant.ErrInternalServer
+		return "", constant.ErrInternalServer
 	}
 
-	err = service.imageRepository.UploadImage(file, filename)
+	filename, err := service.imageRepository.UploadImage(file)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return filename, nil
 }

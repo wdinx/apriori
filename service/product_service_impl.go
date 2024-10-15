@@ -3,7 +3,6 @@ package service
 import (
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
-	"apriori-backend/util"
 	"apriori-backend/util/converter"
 	"github.com/go-playground/validator/v10"
 )
@@ -48,8 +47,8 @@ func (service *ProductServiceImpl) Create(request *web.ProductCreateRequest) err
 	if err := service.validator.Struct(request); err != nil {
 		return err
 	}
-	filename := util.GenerateImageName(request.Name, request.Image.Filename)
-	if err := service.imageService.UploadImage(request.Image, filename); err != nil {
+	filename, err := service.imageService.UploadImage(request.Image)
+	if err != nil {
 		return err
 	}
 	product := converter.CreateToProductModel(request, filename)
@@ -69,8 +68,8 @@ func (service *ProductServiceImpl) Update(request *web.ProductUpdateRequest) err
 		return err
 	}
 
-	filename := util.GenerateImageName(request.Name, request.Image.Filename)
-	if err := service.imageService.UploadImage(request.Image, filename); err != nil {
+	filename, err := service.imageService.UploadImage(request.Image)
+	if err != nil {
 		return err
 	}
 	product := converter.UpdateToProductModel(request, filename)

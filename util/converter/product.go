@@ -3,7 +3,6 @@ package converter
 import (
 	"apriori-backend/model/domain"
 	"apriori-backend/model/web"
-	"apriori-backend/util"
 )
 
 func CreateToProductModel(product *web.ProductCreateRequest, filename string) *domain.Product {
@@ -27,6 +26,6 @@ func ToProductResponse(product *domain.Product) *web.ProductResponse {
 	return &web.ProductResponse{
 		Name:  product.Name,
 		Price: product.Price,
-		Image: util.GetImageUrl(product.Image),
+		Image: product.Image,
 	}
 }

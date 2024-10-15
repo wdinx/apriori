@@ -3,6 +3,7 @@ package config
 type Config struct {
 	Database           Database
 	DigitalOceanSpaces DigitalOceanSpaces
+	Cloudinary         Cloudinary
 }
 
 type Database struct {
@@ -18,4 +19,7 @@ type DigitalOceanSpaces struct {
 	Region      string
 	Name        string
 	Endpoint    string
+}
+type Cloudinary struct {
+	CloudinaryURL string
 }

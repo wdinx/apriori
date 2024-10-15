@@ -16,7 +16,7 @@ import (
 func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *config.Config) {
 	// Your code here
 	userRepository := repository.NewUserRepository(db)
-	imageRepository := repository.NewImageRepository(config.DigitalOceanSpaces)
+	imageRepository := repository.NewImageRepository(config.Cloudinary)
 	productRepository := repository.NewProductRepository(db)
 	transactionRepository := repository.NewTransactionRepository(db)
 	aprioriRepository := repository.NewAprioriRepository(db)

@@ -20,5 +20,8 @@ func Get() *Config {
 			Name:        os.Getenv("DO_BUCKET"),
 			Endpoint:    os.Getenv("DO_ENDPOINT"),
 		},
+		Cloudinary: Cloudinary{
+			CloudinaryURL: os.Getenv("CLOUDINARY_URL"),
+		},
 	}
 }
