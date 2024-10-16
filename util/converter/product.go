@@ -24,6 +24,7 @@ func UpdateToProductModel(product *web.ProductUpdateRequest, filename string) *d
 
 func ToProductResponse(product *domain.Product) *web.ProductResponse {
 	return &web.ProductResponse{
+		ID:    product.ID,
 		Name:  product.Name,
 		Price: product.Price,
 		Image: product.Image,

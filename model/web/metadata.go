@@ -3,7 +3,7 @@ package web
 type Metadata struct {
 	Page      int `json:"page"`
 	Limit     int `json:"limit"`
-	TotalData int `json:"total_item"`
+	TotalItem int `json:"total_item"`
 }
 
 func (metadata *Metadata) Offset() int {

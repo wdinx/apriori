@@ -101,7 +101,7 @@ func (controller *ProductControllerImpl) GetAll(c echo.Context) error {
 	var err error
 	pageParam := c.QueryParam("page")
 	metadata := util.GetMetadata(pageParam)
-	metadata.TotalData, err = controller.productRepository.GetTotalPage(&domain.Product{}, metadata.Limit)
+	metadata.TotalItem, err = controller.productRepository.GetTotalPage(&domain.Product{}, metadata.Limit)
 	products, err := controller.productService.GetAll(metadata)
 	if err != nil {
 		return c.JSON(exception.ErrorHandler(err), web.NewBaseErrorResponse(err.Error()))
