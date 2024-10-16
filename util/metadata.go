@@ -11,7 +11,7 @@ func GetMetadata(pageParam string) *web.Metadata {
 		page = 1
 	}
 
-	limit := 15
+	limit := 5
 
 	return &web.Metadata{
 		Page:  page,
