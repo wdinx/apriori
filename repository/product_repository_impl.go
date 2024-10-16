@@ -5,7 +5,6 @@ import (
 	"apriori-backend/model/web"
 	"fmt"
 	"gorm.io/gorm"
-	"math"
 )
 
 type ProductRepositoryImpl struct {
@@ -61,6 +60,5 @@ func (repository *ProductRepositoryImpl) GetTotalPage(model any, limit int) (tot
 	if err = repository.db.Model(model).Count(&totalData).Error; err != nil {
 		return 0, err
 	}
-	total := math.Ceil(float64(totalData) / float64(limit))
-	return int(total), err
+	return int(totalData), err
 }

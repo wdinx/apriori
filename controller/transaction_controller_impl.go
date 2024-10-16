@@ -78,7 +78,7 @@ func (controller *TransactionControllerImpl) GetById(c echo.Context) error {
 func (controller *TransactionControllerImpl) GetAll(c echo.Context) error {
 	page := c.QueryParam("page")
 	metadata := util.GetMetadata(page)
-	metadata.TotalPage, _ = controller.productRepository.GetTotalPage(&domain.Transaction{}, metadata.Limit)
+	metadata.TotalData, _ = controller.productRepository.GetTotalPage(&domain.Transaction{}, metadata.Limit)
 	transactions, err := controller.transactionService.FindAll(metadata)
 	if err != nil {
 		return c.JSON(500, web.NewBaseErrorResponse(err.Error()))

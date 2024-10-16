@@ -35,7 +35,7 @@ func (controller *AprioriControllerImpl) GetAll(c echo.Context) error {
 	var err error
 	pageParam := c.QueryParam("page")
 	metadata := util.GetMetadata(pageParam)
-	metadata.TotalPage, err = controller.productRepository.GetTotalPage(&domain.AprioriResult{}, metadata.Limit)
+	metadata.TotalData, err = controller.productRepository.GetTotalPage(&domain.AprioriResult{}, metadata.Limit)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse(err.Error()))
 	}
