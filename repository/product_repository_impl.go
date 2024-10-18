@@ -21,9 +21,6 @@ func (repository *ProductRepositoryImpl) GetAll(metadata *web.Metadata) (product
 	if err = repository.db.Limit(metadata.Limit).Offset(metadata.Offset()).Find(&products).Error; err != nil {
 		return nil, err
 	}
-	if err = repository.db.Find(&products).Error; err != nil {
-		return nil, err
-	}
 	return products, err
 }
 
