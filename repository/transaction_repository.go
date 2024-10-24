@@ -11,5 +11,6 @@ type TransactionRepository interface {
 	Delete(id int) error
 	FindById(id int) (*domain.Transaction, error)
 	FindAll(metadata *web.Metadata) (*[]domain.Transaction, error)
+	GetALl() (*[]domain.Transaction, error)
 	FindByDateRange(startDate string, endDate string) (*[]domain.Transaction, error)
 }

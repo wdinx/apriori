@@ -55,3 +55,11 @@ func (repository *TransactionRepositoryImpl) FindByDateRange(startDate string, e
 	}
 	return transactions, nil
 }
+
+func (repository *TransactionRepositoryImpl) GetALl() (*[]domain.Transaction, error) {
+	var transactions []domain.Transaction
+	if err := repository.db.Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+	return &transactions, nil
+}

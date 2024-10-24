@@ -43,12 +43,19 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 		newColumn := strings.Split(column.Items, ",")
 		for _, value := range newColumn {
 			split := strings.Split(value, ",")
-			transaction = append(transaction, split)
+			for _, s := range split {
+				newColumn = append(newColumn, s)
+			}
 		}
+		transaction = append(transaction, newColumn)
 	}
-	option := Apriori.NewOptions(request.MinSup, request.MinConf, 0., 0)
+
+	fmt.Println(transaction)
+	option := Apriori.NewOptions(request.MinSup, request.MinConf, 0., 0.)
 	apriori := Apriori.NewApriori(transaction[1:])
 	aprioriResult := apriori.Calculate(option)
+
+	fmt.Println(aprioriResult)
 
 	var aprioriData domain.AprioriResult
 	proceedApriori := aprioriData.ProceedData(aprioriResult, request)
