@@ -100,7 +100,8 @@ func (controller *ProductControllerImpl) GetByID(c echo.Context) error {
 func (controller *ProductControllerImpl) GetAll(c echo.Context) error {
 	var err error
 	pageParam := c.QueryParam("page")
-	metadata := util.GetMetadata(pageParam)
+	limitParam := c.QueryParam("limit")
+	metadata := util.GetMetadataWIthLimit(pageParam, limitParam)
 	metadata.TotalItem, err = controller.productRepository.GetTotalPage(&domain.Product{}, metadata.Limit)
 	products, err := controller.productService.GetAll(metadata)
 	if err != nil {
