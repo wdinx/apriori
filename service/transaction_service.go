@@ -8,4 +8,5 @@ type TransactionService interface {
 	Delete(id int) error
 	FindById(id int) (*web.TransactionResponse, error)
 	FindAll(metadata *web.Metadata) (*[]web.TransactionResponse, error)
+	InsertByExcel(request *web.InsertByExcelRequest) error
 }

@@ -85,3 +85,17 @@ func (controller *TransactionControllerImpl) GetAll(c echo.Context) error {
 	}
 	return c.JSON(200, web.NewBaseSuccessPaginationResponse("Get all transactions success", *metadata, transactions))
 }
+
+func (controller *TransactionControllerImpl) InsertByExcel(c echo.Context) error {
+	var err error
+	request := web.InsertByExcelRequest{}
+	request.Excel, err = c.FormFile("excel")
+	if err != nil {
+		return c.JSON(400, web.NewBaseErrorResponse("Bad Request"))
+	}
+	err = controller.transactionService.InsertByExcel(&request)
+	if err != nil {
+		return c.JSON(400, web.NewBaseErrorResponse(err.Error()))
+	}
+	return c.JSON(201, web.NewBaseSuccessResponse("Transaction inserted successfully", nil))
+}

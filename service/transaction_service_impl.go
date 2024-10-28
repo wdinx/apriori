@@ -68,3 +68,17 @@ func (service *TransactionServiceImpl) FindAll(metadata *web.Metadata) (*[]web.T
 	}
 	return &responses, nil
 }
+
+func (service *TransactionServiceImpl) InsertByExcel(request *web.InsertByExcelRequest) error {
+	if err := service.validator.Struct(request); err != nil {
+		return err
+	}
+	transaction, err := converter.ToTransactionModelByExcel(request)
+	if err != nil {
+		return err
+	}
+	if err = service.transactionRepository.InsertByExcel(transaction); err != nil {
+		return err
+	}
+	return nil
+}

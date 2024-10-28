@@ -13,4 +13,5 @@ type TransactionRepository interface {
 	FindAll(metadata *web.Metadata) (*[]domain.Transaction, error)
 	GetALl() (*[]domain.Transaction, error)
 	FindByDateRange(startDate string, endDate string) (*[]domain.Transaction, error)
+	InsertByExcel(transaction *[]domain.Transaction) error
 }

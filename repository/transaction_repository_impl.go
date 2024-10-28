@@ -63,3 +63,10 @@ func (repository *TransactionRepositoryImpl) GetALl() (*[]domain.Transaction, er
 	}
 	return &transactions, nil
 }
+
+func (repository *TransactionRepositoryImpl) InsertByExcel(transaction *[]domain.Transaction) error {
+	if err := repository.db.Create(&transaction).Error; err != nil {
+		return err
+	}
+	return nil
+}

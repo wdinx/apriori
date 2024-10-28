@@ -53,6 +53,7 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	router.POST("/transaction", transactionController.Create)
 	router.PUT("/transaction/:id", transactionController.Update)
 	router.DELETE("/transaction/:id", transactionController.Delete)
+	router.POST("/transactions/excel", transactionController.InsertByExcel)
 
 	// Apriori
 	e.POST("/apriori", aprioriController.Apriori)
