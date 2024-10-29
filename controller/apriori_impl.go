@@ -8,6 +8,7 @@ import (
 	"apriori-backend/util"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"time"
 )
 
 type AprioriControllerImpl struct {
@@ -22,6 +23,18 @@ func NewAprioriController(aprioriService service.AprioriService, productReposito
 func (controller *AprioriControllerImpl) Apriori(c echo.Context) error {
 	var apriori web.CreateAprioriRequest
 	c.Bind(&apriori)
+
+	dateStart, err := time.Parse("2006-01-02", apriori.DateStart)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse("Invalid Date Start Format"))
+	}
+	dateEnd, err := time.Parse("2006-01-02", apriori.DateEnd)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse("Invalid Date End Format"))
+	}
+	if dateStart.After(dateEnd) {
+		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse("Tanggal mulai tidak boleh lebih besar dari tanggal selesai"))
+	}
 
 	result, err := controller.aprioriService.ProcessApriori(&apriori)
 	if err != nil {
