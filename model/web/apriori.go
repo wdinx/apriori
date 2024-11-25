@@ -37,6 +37,6 @@ type AprioriBaseResponse struct {
 	ItemsetDua         []ItemsetDua         `json:"itemset_dua"`
 	ItemsetTiga        []ItemsetTiga        `json:"itemset_tiga"`
 	RuleAssociation    []RuleAssociation    `json:"rule_association"`
-	ConfidanceItemset2 []ConfidanceItemset2 `json:"confidance_itemset_2"`
-	ConfidanceItemset3 []ConfidanceItemset3 `json:"confidance_itemset_3"`
+	ConfidenceItemset2 []ConfidenceItemset2 `json:"confidance_itemset_2"`
+	ConfidenceItemset3 []ConfidenceItemset3 `json:"confidance_itemset_3"`
 }

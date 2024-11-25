@@ -57,8 +57,8 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 
 	fmt.Println(aprioriResult)
 
-	var aprioriData domain.AprioriResult
-	proceedApriori := aprioriData.ProceedData(aprioriResult, request)
+	var aprioriData domain.AprioriData
+	proceedApriori := aprioriData.ProceedData(aprioriResult, request, transaction)
 	if err = service.aprioriRepository.Create(proceedApriori); err != nil {
 		return nil, err
 	}

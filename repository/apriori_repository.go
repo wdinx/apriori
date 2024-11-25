@@ -6,8 +6,8 @@ import (
 )
 
 type AprioriRepository interface {
-	FindAll(metadata *web.Metadata) (*[]domain.AprioriResult, error)
-	Create(apriori *domain.AprioriResult) error
-	GetByID(id string) (*domain.AprioriResult, error)
+	FindAll(metadata *web.Metadata) (*[]domain.AprioriData, error)
+	Create(apriori *domain.AprioriData) error
+	GetByID(id string) (*domain.AprioriData, error)
 	Delete(id string) error
 }

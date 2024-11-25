@@ -83,10 +83,10 @@ func (a *AprioriResult) ToResponse() *web.AprioriBaseResponse {
 						return "Korelasi Negatif"
 					}()},
 				)
-				response.ConfidanceItemset2 = append(response.ConfidanceItemset2, web.ConfidanceItemset2{
+				response.ConfidenceItemset2 = append(response.ConfidenceItemset2, web.ConfidenceItemset2{
 					Name:        antecedent,
 					Support:     data.Support,
-					Confidance:  dataDuaSet.Confident,
+					Confidence:  dataDuaSet.Confident,
 					Explanation: "Lolos",
 				})
 			}
@@ -111,10 +111,10 @@ func (a *AprioriResult) ToResponse() *web.AprioriBaseResponse {
 						return "Korelasi Negatif"
 					}()},
 				)
-				response.ConfidanceItemset3 = append(response.ConfidanceItemset3, web.ConfidanceItemset3{
+				response.ConfidenceItemset3 = append(response.ConfidenceItemset3, web.ConfidenceItemset3{
 					Name:        antecedent,
 					Support:     data.Support,
-					Confidance:  dataTigaSet.Confident,
+					Confidence:  dataTigaSet.Confident,
 					Explanation: "Lolos",
 				})
 			}
