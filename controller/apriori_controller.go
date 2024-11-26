@@ -7,4 +7,6 @@ type AprioriController interface {
 	GetAll(c echo.Context) error
 	GetByID(c echo.Context) error
 	DeleteByID(c echo.Context) error
+	GetRecommendationItem(c echo.Context) error
+	CreateRecommendationItem(c echo.Context) error
 }

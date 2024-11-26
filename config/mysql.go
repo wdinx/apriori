@@ -31,7 +31,7 @@ func InitDB(database Database) *gorm.DB {
 }
 
 func Migrate() {
-	err := db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&domain.User{}, &domain.Product{}, &domain.OrderedStatistic{}, &domain.AprioriData{}, &domain.ItemsetSatu{}, &domain.ItemsetDua{}, &domain.ItemsetTiga{}, &domain.ConfidenceItemset3{}, &domain.ConfidenceItemset2{}, &domain.RuleAssociation{})
+	err := db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&domain.User{}, &domain.Product{}, &domain.OrderedStatistic{}, &domain.AprioriData{}, &domain.ItemsetSatu{}, &domain.ItemsetDua{}, &domain.ItemsetTiga{}, &domain.ConfidenceItemset3{}, &domain.ConfidenceItemset2{}, &domain.RuleAssociation{}, &domain.RecommendationItem{})
 	if err != nil {
 		log.Fatalf("error migratin database: %s", err.Error())
 	}

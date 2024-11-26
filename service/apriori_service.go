@@ -7,4 +7,6 @@ type AprioriService interface {
 	GetAll(metadata *web.Metadata) (*[]web.AprioriBaseResponse, error)
 	GetByID(id string) (*web.AprioriBaseResponse, error)
 	DeleteByID(id string) error
+	GetRecommendationItem() (*web.RecommendationItemResponse, error)
+	CreateRecommendationItem() error
 }

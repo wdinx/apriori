@@ -76,3 +76,19 @@ func (controller *AprioriControllerImpl) DeleteByID(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("Success", nil))
 }
+
+func (controller *AprioriControllerImpl) GetRecommendationItem(c echo.Context) error {
+	result, err := controller.aprioriService.GetRecommendationItem()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse(err.Error()))
+	}
+	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("Success", result))
+}
+
+func (controller *AprioriControllerImpl) CreateRecommendationItem(c echo.Context) error {
+	err := controller.aprioriService.CreateRecommendationItem()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse(err.Error()))
+	}
+	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("Success", nil))
+}
