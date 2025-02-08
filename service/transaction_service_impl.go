@@ -4,6 +4,7 @@ import (
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
 	"apriori-backend/util/converter"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -16,6 +17,7 @@ func NewTransactionService(transactionRepository repository.TransactionRepositor
 	return &TransactionServiceImpl{transactionRepository: transactionRepository, validator: validator}
 }
 
+// Melakukan request ke repository untuk membuat transaksi dan mengirimnya ke kontroller
 func (service *TransactionServiceImpl) Create(request *web.CreateTransactionRequest) error {
 	if err := service.validator.Struct(request); err != nil {
 		return err
@@ -26,6 +28,7 @@ func (service *TransactionServiceImpl) Create(request *web.CreateTransactionRequ
 	return nil
 }
 
+// Melakukan request ke repository untuk update data transaksi dan mengirimnya ke kontroller
 func (service *TransactionServiceImpl) Update(request *web.UpdateTransactionRequest) error {
 	if err := service.validator.Struct(request); err != nil {
 		return err
@@ -41,6 +44,7 @@ func (service *TransactionServiceImpl) Update(request *web.UpdateTransactionRequ
 	return nil
 }
 
+// Melakukan request ke repository untuk menghapus transaksi dan mengirimnya ke kontroller
 func (service *TransactionServiceImpl) Delete(id int) error {
 	if err := service.transactionRepository.Delete(id); err != nil {
 		return err
@@ -48,6 +52,7 @@ func (service *TransactionServiceImpl) Delete(id int) error {
 	return nil
 }
 
+// Melakukan request ke repository untuk mengambil data transaksi by id dan mengirimnya ke kontroller
 func (service *TransactionServiceImpl) FindById(id int) (*web.TransactionResponse, error) {
 	transaction, err := service.transactionRepository.FindById(id)
 	if err != nil {
@@ -56,6 +61,7 @@ func (service *TransactionServiceImpl) FindById(id int) (*web.TransactionRespons
 	return converter.ToTransactionResponse(transaction), nil
 }
 
+// Melakukan request ke repository untuk mengambil semua data transaksi dan mengirimnya ke kontroller
 func (service *TransactionServiceImpl) FindAll(metadata *web.Metadata) (*[]web.TransactionResponse, error) {
 	transactions, err := service.transactionRepository.FindAll(metadata)
 	if err != nil {
@@ -69,6 +75,7 @@ func (service *TransactionServiceImpl) FindAll(metadata *web.Metadata) (*[]web.T
 	return &responses, nil
 }
 
+// Melakukan request ke repository untuk membuat transaksi berdasarkan data excel dan mengirimnya ke kontroller
 func (service *TransactionServiceImpl) InsertByExcel(request *web.InsertByExcelRequest) error {
 	if err := service.validator.Struct(request); err != nil {
 		return err

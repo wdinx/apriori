@@ -6,6 +6,7 @@ import (
 	"apriori-backend/repository"
 	"apriori-backend/util"
 	"apriori-backend/util/converter"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -21,6 +22,7 @@ func NewUserService(userRepository repository.UserRepository, validator *validat
 	}
 }
 
+// Memvalidasi proses login user
 func (service *UserServiceImpl) Login(user *web.LoginRequest) (*web.LoginResponse, error) {
 	err := service.validator.Struct(user)
 	if err != nil {
@@ -44,6 +46,7 @@ func (service *UserServiceImpl) Login(user *web.LoginRequest) (*web.LoginRespons
 	return converter.ToLoginResponse(result, token), nil
 }
 
+// Memvalidasi proses register user
 func (service *UserServiceImpl) Register(user *web.RegisterRequest) error {
 	err := service.validator.Struct(user)
 	if err != nil {

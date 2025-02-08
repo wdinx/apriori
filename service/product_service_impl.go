@@ -4,6 +4,7 @@ import (
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
 	"apriori-backend/util/converter"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -21,6 +22,7 @@ func NewProductService(productRepository repository.ProductRepository, imageServ
 	}
 }
 
+// Melakukan request ke repository untuk mengambil semua data produk dan mengirimnya ke kontroller
 func (service *ProductServiceImpl) GetAll(metadata *web.Metadata) (*[]web.ProductResponse, error) {
 	products, err := service.productRepository.GetAll(metadata)
 	if err != nil {
@@ -35,6 +37,7 @@ func (service *ProductServiceImpl) GetAll(metadata *web.Metadata) (*[]web.Produc
 	return &response, nil
 }
 
+// Melakukan request ke repository untuk mengambil data produk berdasarkan ID nya dan mengirimnya ke kontroller
 func (service *ProductServiceImpl) GetByID(id int) (*web.ProductResponse, error) {
 	product, err := service.productRepository.GetByID(id)
 	if err != nil {
@@ -43,6 +46,7 @@ func (service *ProductServiceImpl) GetByID(id int) (*web.ProductResponse, error)
 	return converter.ToProductResponse(product), nil
 }
 
+// Melakukan request ke repository untuk menyimpan data produk dan mengirimnya ke kontroller
 func (service *ProductServiceImpl) Create(request *web.ProductCreateRequest) error {
 	if err := service.validator.Struct(request); err != nil {
 		return err
@@ -59,6 +63,7 @@ func (service *ProductServiceImpl) Create(request *web.ProductCreateRequest) err
 	return nil
 }
 
+// Melakukan request ke repository untuk update data produk dan mengirimnya ke kontroller
 func (service *ProductServiceImpl) Update(request *web.ProductUpdateRequest) error {
 	if err := service.validator.Struct(request); err != nil {
 		return err
@@ -80,6 +85,7 @@ func (service *ProductServiceImpl) Update(request *web.ProductUpdateRequest) err
 	return nil
 }
 
+// Melakukan request ke repository untuk delete data produk dan mengirimnya ke kontroller
 func (service *ProductServiceImpl) Delete(id int) error {
 	if err := service.productRepository.Delete(id); err != nil {
 		return err

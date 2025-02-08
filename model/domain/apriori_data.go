@@ -2,9 +2,12 @@ package domain
 
 import (
 	"apriori-backend/model/web"
+	"fmt"
+	"math"
+	"strings"
+
 	Apriori "github.com/eMAGTechLabs/go-apriori"
 	"github.com/google/uuid"
-	"strings"
 )
 
 type AprioriData struct {
@@ -21,6 +24,7 @@ type AprioriData struct {
 	RuleAssociation    []RuleAssociation    `gorm:"foreignKey:AprioriDataID"`
 }
 
+// Memproses data transaksi dan menyimpannya ke struct AprioriData
 func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web.CreateAprioriRequest, transactionData [][]string) *AprioriData {
 	r.ID = uuid.New().String()
 	r.DateStart = request.DateStart
@@ -33,6 +37,8 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 			continue
 		}
 
+		fmt.Print(record.GetSupportRecord().GetSupport())
+
 		totalTransaction := countExactMatches(transactionData, record.GetSupportRecord().GetItems())
 		switch {
 		case len(record.GetSupportRecord().GetItems()) == 1:
@@ -40,7 +46,7 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 			r.ItemsetSatu = append(r.ItemsetSatu, ItemsetSatu{
 				ID:            itemsetSatuID.String(),
 				Name:          record.GetSupportRecord().GetItems()[0],
-				Support:       record.GetSupportRecord().GetSupport(),
+				Support:       math.Round(record.GetSupportRecord().GetSupport()*100) / 100,
 				Count:         totalTransaction,
 				Explanation:   "Lolos",
 				AprioriDataID: r.ID,
@@ -114,6 +120,7 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 	return r
 }
 
+// Memproses data apriori agar lebih mudah dibaca dan mengirimnya ke controller untuk ditampilkan ke User.
 func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 	var response web.AprioriBaseResponse
 
@@ -127,7 +134,7 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 		response.ItemsetSatu = append(response.ItemsetSatu, web.ItemsetSatu{
 			Name:        strings.Split(data.Name, ","),
 			Count:       data.Count,
-			Support:     data.Support,
+			Support:     math.Round(data.Support*100) / 100,
 			Explanation: data.Explanation,
 		})
 	}
@@ -136,7 +143,7 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 		response.ItemsetDua = append(response.ItemsetDua, web.ItemsetDua{
 			Name:        strings.Split(data.Name, ","),
 			Count:       data.Count,
-			Support:     data.Support,
+			Support:     math.Round(data.Support*100) / 100,
 			Explanation: data.Explanation,
 		})
 	}
@@ -144,8 +151,8 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 	for _, data := range r.ConfidenceItemset2 {
 		response.ConfidenceItemset2 = append(response.ConfidenceItemset2, web.ConfidenceItemset2{
 			Name:        strings.Split(data.Name, ","),
-			Support:     data.Support,
-			Confidence:  data.Confidence,
+			Support:     math.Round(data.Support*100) / 100,
+			Confidence:  math.Round(data.Confidence*100) / 100,
 			Explanation: data.Explanation,
 		})
 	}
@@ -154,7 +161,7 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 		response.ItemsetTiga = append(response.ItemsetTiga, web.ItemsetTiga{
 			Name:        strings.Split(data.Name, ","),
 			Count:       data.Count,
-			Support:     data.Support,
+			Support:     math.Round(data.Support*100) / 100,
 			Explanation: data.Explanation,
 		})
 	}
@@ -162,8 +169,8 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 	for _, data := range r.ConfidenceItemset3 {
 		response.ConfidenceItemset3 = append(response.ConfidenceItemset3, web.ConfidenceItemset3{
 			Name:        strings.Split(data.Name, ","),
-			Support:     data.Support,
-			Confidence:  data.Confidence,
+			Support:     math.Round(data.Support*100) / 100,
+			Confidence:  math.Round(data.Confidence*100) / 100,
 			Explanation: data.Explanation,
 		})
 	}
@@ -171,8 +178,8 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 	for _, data := range r.RuleAssociation {
 		response.RuleAssociation = append(response.RuleAssociation, web.RuleAssociation{
 			Name:        data.Name,
-			Confidence:  data.Confidence,
-			LiftRatio:   data.LiftRatio,
+			Confidence:  math.Round(data.Confidence*100) / 100,
+			LiftRatio:   math.Round(data.LiftRatio*100) / 100,
 			Explanation: data.Explanation,
 		})
 	}

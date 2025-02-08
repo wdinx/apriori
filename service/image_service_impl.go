@@ -14,6 +14,7 @@ func NewImageService(imageRepository repository.ImageRepository) ImageService {
 	return &ImageServiceImpl{imageRepository: imageRepository}
 }
 
+// Mengirim data gambar ke repository
 func (service *ImageServiceImpl) UploadImage(image *multipart.FileHeader) (string, error) {
 	file, err := image.Open()
 	defer file.Close()

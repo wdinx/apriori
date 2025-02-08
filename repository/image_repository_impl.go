@@ -4,9 +4,10 @@ import (
 	"apriori-backend/config"
 	"context"
 	"errors"
+	"mime/multipart"
+
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
-	"mime/multipart"
 )
 
 type ImageRepositoryImpl struct {
@@ -17,6 +18,7 @@ func NewImageRepository(cfg config.Cloudinary) ImageRepository {
 	return &ImageRepositoryImpl{cfg: cfg}
 }
 
+// Mengupload data image ke Cloudinary agar dapat di akses secara online
 func (repository *ImageRepositoryImpl) UploadImage(file multipart.File) (string, error) {
 	if repository.cfg.CloudinaryURL == "" {
 		return "", errors.New("cloudinary url is empty")

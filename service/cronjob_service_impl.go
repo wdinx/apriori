@@ -1,9 +1,10 @@
 package service
 
 import (
-	"github.com/go-co-op/gocron/v2"
 	"log"
 	"time"
+
+	"github.com/go-co-op/gocron/v2"
 )
 
 type CronjobServiceImpl struct {
@@ -18,6 +19,7 @@ func NewCronJobServiceImpl(aprioriService AprioriService, scheduler gocron.Sched
 	}
 }
 
+// Inisiasi Cronjob
 func (c *CronjobServiceImpl) InitCronJob() {
 	job, err := c.Scheduler.NewJob(
 		gocron.DurationJob(1*time.Hour),
@@ -29,6 +31,7 @@ func (c *CronjobServiceImpl) InitCronJob() {
 	log.Println("Cronjob Init, Job ID:", job.ID())
 }
 
+// Melakukan update rekomendasi item setiap jam 00.00
 func (c *CronjobServiceImpl) UpdateRecommendationItem() {
 	log.Println("Cronjob Update Recommendation Item Running")
 	// Process Apriori

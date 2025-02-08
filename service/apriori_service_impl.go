@@ -27,10 +27,13 @@ func NewAprioriService(transactionRepository repository.TransactionRepository, a
 	}
 }
 
+// Melakukan proses apriori berdasarkan request dari user
 func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequest) (*web.AprioriBaseResponse, error) {
 	if err := service.validator.Struct(request); err != nil {
 		return nil, err
 	}
+
+	// Mengambil data transaksi berdasarkan request dari user
 	result, err := service.transactionRepository.FindByDateRange(request.DateStart, request.DateEnd)
 	if err != nil {
 		return nil, err
@@ -42,6 +45,7 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 
 	var transaction [][]string
 
+	// Memasukkan data transaksi ke variabel transaction
 	for _, column := range *result {
 		newColumn := strings.Split(column.Items, ",")
 		for _, value := range newColumn {
@@ -54,12 +58,17 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 	}
 
 	fmt.Println(transaction)
+
+	// Melakukan proses apriori terhadap data transaction
+	// Set nilai min support dan min confidence berdasarkan request user 
 	option := Apriori.NewOptions(request.MinSup, request.MinConf, 0., 0.)
 	apriori := Apriori.NewApriori(transaction[1:])
 	aprioriResult := apriori.Calculate(option)
 
 	fmt.Println(aprioriResult)
 
+
+	// Mengolah data hasil apriori ke dalam struct yang disediakan agar lebih mudah dibaca
 	var aprioriData domain.AprioriData
 	proceedApriori := aprioriData.ProceedData(aprioriResult, request, transaction)
 	if err = service.aprioriRepository.Create(proceedApriori); err != nil {
@@ -69,6 +78,7 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 	return aprioriResponse, nil
 }
 
+// Mengambil semua data hasil apriori
 func (service *AprioriServiceImpl) GetAll(metadata *web.Metadata) (*[]web.AprioriBaseResponse, error) {
 	apriori, err := service.aprioriRepository.FindAll(metadata)
 
@@ -82,6 +92,8 @@ func (service *AprioriServiceImpl) GetAll(metadata *web.Metadata) (*[]web.Aprior
 	return &response, nil
 }
 
+
+// Mengambil data hasil apriori berdasarkan id di database
 func (service *AprioriServiceImpl) GetByID(id string) (*web.AprioriBaseResponse, error) {
 	apriori, err := service.aprioriRepository.GetByID(id)
 	if err != nil {
@@ -97,6 +109,7 @@ func (service *AprioriServiceImpl) DeleteByID(id string) error {
 	return nil
 }
 
+// Mengambil rekomendasi item berdasarkan hasil apriori
 func (service *AprioriServiceImpl) GetRecommendationItem() (*web.RecommendationItemResponse, error) {
 	recommendationRepository, err := service.recommendationRepository.GetLast()
 	if err != nil {
@@ -105,6 +118,8 @@ func (service *AprioriServiceImpl) GetRecommendationItem() (*web.RecommendationI
 	return recommendationRepository.ToResponse(recommendationRepository.Name), nil
 }
 
+
+// Membuat rekomendasi item berdasarkan nilai supportnya
 func (service *AprioriServiceImpl) CreateRecommendationItem() error {
 	dateEnd, err := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
 	fmt.Println(dateEnd.String())
