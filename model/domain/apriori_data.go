@@ -3,19 +3,23 @@ package domain
 import (
 	"apriori-backend/model/web"
 	"fmt"
+	"gorm.io/gorm"
 	"math"
 	"strings"
+	"time"
 
 	Apriori "github.com/eMAGTechLabs/go-apriori"
 	"github.com/google/uuid"
 )
 
 type AprioriData struct {
-	ID                 string               `gorm:"primaryKey;not null"`
-	DateStart          string               `gorm:"not null"`
-	DateEnd            string               `gorm:"not null"`
-	MinSupport         float64              `gorm:"not null"`
-	MinConfidence      float64              `gorm:"not null"`
+	gorm.Model
+	ID                 string  `gorm:"primaryKey;not null"`
+	DateStart          string  `gorm:"not null"`
+	DateEnd            string  `gorm:"not null"`
+	MinSupport         float64 `gorm:"not null"`
+	MinConfidence      float64 `gorm:"not null"`
+	CreatedAt          time.Time
 	ItemsetSatu        []ItemsetSatu        `gorm:"foreignKey:AprioriDataID"`
 	ItemsetDua         []ItemsetDua         `gorm:"foreignKey:AprioriDataID"`
 	ConfidenceItemset2 []ConfidenceItemset2 `gorm:"foreignKey:AprioriDataID"`
@@ -25,7 +29,7 @@ type AprioriData struct {
 }
 
 // Memproses data transaksi dan menyimpannya ke struct AprioriData
-func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web.CreateAprioriRequest, transactionData [][]string) *AprioriData {
+func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web.CreateAprioriRequest, transactionData [][]string, minConf float64) *AprioriData {
 	r.ID = uuid.New().String()
 	r.DateStart = request.DateStart
 	r.DateEnd = request.DateEnd
@@ -64,23 +68,42 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 			})
 
 			for _, statistic := range record.GetOrderedStatistic() {
+				// Apabila ingin menampilkan confidence itemset 2
+
 				confidenceItemset2ID = uuid.New()
+				var confidenceExplanation string
+				if minConf <= statistic.GetConfidence() {
+					confidenceExplanation = "Lolos"
+				} else {
+					confidenceExplanation = "Tidak Lolos"
+				}
+
 				r.ConfidenceItemset2 = append(r.ConfidenceItemset2, ConfidenceItemset2{
 					ID:            confidenceItemset2ID.String(),
 					Name:          strings.Join(statistic.GetBase(), ","),
 					Support:       record.GetSupportRecord().GetSupport(),
 					Confidence:    statistic.GetConfidence(),
-					Explanation:   "Lolos",
+					Explanation:   confidenceExplanation,
 					AprioriDataID: r.ID,
 				})
 
+				if statistic.GetConfidence() < minConf {
+					continue
+				}
+
 				ruleAssociationID = uuid.New()
+				var explanation string
+				if statistic.GetLift() >= 1 {
+					explanation = "Positif"
+				} else {
+					explanation = "Negatif"
+				}
 				r.RuleAssociation = append(r.RuleAssociation, RuleAssociation{
 					ID:            ruleAssociationID.String(),
 					Name:          strings.Join(statistic.GetBase(), ",") + " -> " + strings.Join(statistic.GetAdd(), ","),
 					Confidence:    statistic.GetConfidence(),
 					LiftRatio:     statistic.GetLift(),
-					Explanation:   "Lolos",
+					Explanation:   explanation,
 					AprioriDataID: r.ID,
 				})
 			}
@@ -96,22 +119,39 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 			})
 			for _, statistic := range record.GetOrderedStatistic() {
 				confidenceItemset3ID = uuid.New()
+
+				var confidenceExplanation string
+				if minConf <= statistic.GetConfidence() {
+					confidenceExplanation = "Lolos"
+				} else {
+					confidenceExplanation = "Tidak Lolos"
+				}
 				r.ConfidenceItemset3 = append(r.ConfidenceItemset3, ConfidenceItemset3{
 					ID:            confidenceItemset3ID.String(),
 					Name:          strings.Join(statistic.GetBase(), ","),
 					Support:       record.GetSupportRecord().GetSupport(),
 					Confidence:    statistic.GetConfidence(),
-					Explanation:   "Lolos",
+					Explanation:   confidenceExplanation,
 					AprioriDataID: r.ID,
 				})
 
+				if statistic.GetConfidence() < minConf {
+					continue
+				}
+
 				ruleAssociationID = uuid.New()
+				var explanation string
+				if statistic.GetLift() >= 1 {
+					explanation = "Positif"
+				} else {
+					explanation = "Negatif"
+				}
 				r.RuleAssociation = append(r.RuleAssociation, RuleAssociation{
 					ID:            ruleAssociationID.String(),
 					Name:          strings.Join(statistic.GetBase(), ",") + " -> " + strings.Join(statistic.GetAdd(), ","),
 					Confidence:    statistic.GetConfidence(),
 					LiftRatio:     statistic.GetLift(),
-					Explanation:   "Lolos",
+					Explanation:   explanation,
 					AprioriDataID: r.ID,
 				})
 			}

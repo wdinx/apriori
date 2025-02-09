@@ -45,6 +45,15 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 
 	var transaction [][]string
 
+	transaction = [][]string{
+		{"BlusBerwarna", "BlusHitam", "BlusImport", "CelanaBerwarna"},
+		{"BlusHitam", "CelanaJeans"},
+		{"BlusPutih", "CelanaScuba", "RokBludru", "RokBerwarna"},
+		{"CelanaJeans", "BlusImport", "RokBerwarna"},
+		{"BlusHitam", "Kalung", "BlusBerwarna", "CelanaKulot", "GamisImport", "RokPlisket", "RokBludru"},
+		{"BlusHitam", "RokBerwarna"},
+	}
+
 	// Memasukkan data transaksi ke variabel transaction
 	for _, column := range *result {
 		newColumn := strings.Split(column.Items, ",")
@@ -54,23 +63,18 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 				newColumn = append(newColumn, s)
 			}
 		}
-		transaction = append(transaction, newColumn)
+		//transaction = append(transaction, newColumn)
 	}
 
-	fmt.Println(transaction)
-
 	// Melakukan proses apriori terhadap data transaction
-	// Set nilai min support dan min confidence berdasarkan request user 
-	option := Apriori.NewOptions(request.MinSup, request.MinConf, 0., 0.)
-	apriori := Apriori.NewApriori(transaction[1:])
+	// Set nilai min support dan min confidence berdasarkan request user
+	option := Apriori.NewOptions(request.MinSup, 0.0, 0., 0.)
+	apriori := Apriori.NewApriori(transaction[0:])
 	aprioriResult := apriori.Calculate(option)
-
-	fmt.Println(aprioriResult)
-
 
 	// Mengolah data hasil apriori ke dalam struct yang disediakan agar lebih mudah dibaca
 	var aprioriData domain.AprioriData
-	proceedApriori := aprioriData.ProceedData(aprioriResult, request, transaction)
+	proceedApriori := aprioriData.ProceedData(aprioriResult, request, transaction, request.MinConf)
 	if err = service.aprioriRepository.Create(proceedApriori); err != nil {
 		return nil, err
 	}
@@ -91,7 +95,6 @@ func (service *AprioriServiceImpl) GetAll(metadata *web.Metadata) (*[]web.Aprior
 	}
 	return &response, nil
 }
-
 
 // Mengambil data hasil apriori berdasarkan id di database
 func (service *AprioriServiceImpl) GetByID(id string) (*web.AprioriBaseResponse, error) {
@@ -117,7 +120,6 @@ func (service *AprioriServiceImpl) GetRecommendationItem() (*web.RecommendationI
 	}
 	return recommendationRepository.ToResponse(recommendationRepository.Name), nil
 }
-
 
 // Membuat rekomendasi item berdasarkan nilai supportnya
 func (service *AprioriServiceImpl) CreateRecommendationItem() error {

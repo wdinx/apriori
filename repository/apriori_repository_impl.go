@@ -4,6 +4,7 @@ import (
 	"apriori-backend/model/domain"
 	"apriori-backend/model/web"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -20,9 +21,10 @@ func NewAprioriRepository(db *gorm.DB) AprioriRepository {
 func (r *AprioriRepositoryImpl) FindAll(metadata *web.Metadata) (*[]domain.AprioriData, error) {
 	var apriori []domain.AprioriData
 
-	if err := r.db.Limit(metadata.Limit).Offset(metadata.Offset()).Find(&apriori).Error; err != nil {
+	if err := r.db.Order("created_at DESC").Limit(metadata.Limit).Offset(metadata.Offset()).Find(&apriori).Error; err != nil {
 		return &[]domain.AprioriData{}, errors.New("Error When Fetching Apriori Result")
 	}
+	fmt.Println(metadata.TotalItem)
 	return &apriori, nil
 }
 
