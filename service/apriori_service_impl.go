@@ -45,15 +45,6 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 
 	var transaction [][]string
 
-	transaction = [][]string{
-		{"BlusBerwarna", "BlusHitam", "BlusImport", "CelanaBerwarna"},
-		{"BlusHitam", "CelanaJeans"},
-		{"BlusPutih", "CelanaScuba", "RokBludru", "RokBerwarna"},
-		{"CelanaJeans", "BlusImport", "RokBerwarna"},
-		{"BlusHitam", "Kalung", "BlusBerwarna", "CelanaKulot", "GamisImport", "RokPlisket", "RokBludru"},
-		{"BlusHitam", "RokBerwarna"},
-	}
-
 	// Memasukkan data transaksi ke variabel transaction
 	for _, column := range *result {
 		newColumn := strings.Split(column.Items, ",")
@@ -63,7 +54,7 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 				newColumn = append(newColumn, s)
 			}
 		}
-		//transaction = append(transaction, newColumn)
+		transaction = append(transaction, newColumn)
 	}
 
 	// Melakukan proses apriori terhadap data transaction

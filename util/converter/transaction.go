@@ -5,6 +5,7 @@ import (
 	"apriori-backend/model/web"
 	"apriori-backend/util"
 	"errors"
+	"fmt"
 	"github.com/xuri/excelize/v2"
 	"time"
 )
@@ -51,10 +52,12 @@ func ToTransactionModelByExcel(r *web.InsertByExcelRequest) (*[]domain.Transacti
 	}
 
 	transactions := make([]domain.Transaction, 0)
+	fmt.Println(rows)
 	for i, row := range rows {
-		if i == 0 {
+		if i == 0 || len(row) != 2 {
 			continue
 		}
+		fmt.Println(row)
 		date, err := time.Parse("01-02-06", row[0])
 		if err != nil {
 			return nil, errors.New("invalid date format")
