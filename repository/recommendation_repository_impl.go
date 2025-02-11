@@ -25,7 +25,7 @@ func (r *RecommendationRepositoryImpl) Create(recommendationItem *domain.Recomme
 // Mengambil data yang terakhir tersimpan di database
 func (r *RecommendationRepositoryImpl) GetLast() (*domain.RecommendationItem, error) {
 	var recommendationItem domain.RecommendationItem
-	if err := r.db.Last(&recommendationItem).Error; err != nil {
+	if err := r.db.Order("created_at DESC").First(&recommendationItem).Error; err != nil {
 		return nil, err
 	}
 	return &recommendationItem, nil
