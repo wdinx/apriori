@@ -79,3 +79,10 @@ func (repository *TransactionRepositoryImpl) InsertByExcel(transaction *[]domain
 	}
 	return nil
 }
+
+func (repository *TransactionRepositoryImpl) DeleteAll() error {
+	if err := repository.db.Exec("DELETE FROM transactions").Error; err != nil {
+		return err
+	}
+	return nil
+}

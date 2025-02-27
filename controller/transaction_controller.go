@@ -9,4 +9,5 @@ type TransactionController interface {
 	GetById(c echo.Context) error
 	GetAll(c echo.Context) error
 	InsertByExcel(c echo.Context) error
+	DeleteAll(c echo.Context) error
 }

@@ -89,3 +89,10 @@ func (service *TransactionServiceImpl) InsertByExcel(request *web.InsertByExcelR
 	}
 	return nil
 }
+
+func (service *TransactionServiceImpl) DeleteAll() error {
+	if err := service.transactionRepository.DeleteAll(); err != nil {
+		return err
+	}
+	return nil
+}

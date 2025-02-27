@@ -99,3 +99,11 @@ func (controller *TransactionControllerImpl) InsertByExcel(c echo.Context) error
 	}
 	return c.JSON(201, web.NewBaseSuccessResponse("Transaction inserted successfully", nil))
 }
+
+func (controller *TransactionControllerImpl) DeleteAll(c echo.Context) error {
+	err := controller.transactionService.DeleteAll()
+	if err != nil {
+		return c.JSON(500, web.NewBaseErrorResponse(err.Error()))
+	}
+	return c.JSON(200, web.NewBaseSuccessResponse("All transactions deleted successfully", nil))
+}

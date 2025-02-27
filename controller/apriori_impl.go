@@ -62,10 +62,11 @@ func (controller *AprioriControllerImpl) GetAll(c echo.Context) error {
 func (controller *AprioriControllerImpl) GetByID(c echo.Context) error {
 	strID := c.Param("id")
 	result, err := controller.aprioriService.GetByID(strID)
+	data := result.GetRecommendation(result)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse(err.Error()))
 	}
-	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("Success", result))
+	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("Success", data))
 }
 
 func (controller *AprioriControllerImpl) DeleteByID(c echo.Context) error {

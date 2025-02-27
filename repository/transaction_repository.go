@@ -14,4 +14,5 @@ type TransactionRepository interface {
 	GetALl() (*[]domain.Transaction, error)
 	FindByDateRange(startDate string, endDate string) (*[]domain.Transaction, error)
 	InsertByExcel(transaction *[]domain.Transaction) error
+	DeleteAll() error
 }
