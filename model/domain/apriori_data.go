@@ -77,10 +77,10 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 				} else {
 					confidenceExplanation = "Tidak Lolos"
 				}
-
+				confidenceItem := fmt.Sprintf("%s -> %s", strings.Join(statistic.GetBase(), ","), strings.Join(statistic.GetAdd(), ","))
 				r.ConfidenceItemset2 = append(r.ConfidenceItemset2, ConfidenceItemset2{
 					ID:            confidenceItemset2ID.String(),
-					Name:          strings.Join(statistic.GetBase(), ","),
+					Name:          confidenceItem,
 					Support:       record.GetSupportRecord().GetSupport(),
 					Confidence:    statistic.GetConfidence(),
 					Explanation:   confidenceExplanation,
@@ -126,9 +126,11 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 				} else {
 					confidenceExplanation = "Tidak Lolos"
 				}
+				confidenceItem := fmt.Sprintf("%s -> %s", strings.Join(statistic.GetBase(), ","), strings.Join(statistic.GetAdd(), ","))
+
 				r.ConfidenceItemset3 = append(r.ConfidenceItemset3, ConfidenceItemset3{
 					ID:            confidenceItemset3ID.String(),
-					Name:          strings.Join(statistic.GetBase(), ","),
+					Name:          confidenceItem,
 					Support:       record.GetSupportRecord().GetSupport(),
 					Confidence:    statistic.GetConfidence(),
 					Explanation:   confidenceExplanation,
