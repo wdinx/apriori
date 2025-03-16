@@ -20,12 +20,12 @@ type AprioriData struct {
 	MinSupport         float64 `gorm:"not null"`
 	MinConfidence      float64 `gorm:"not null"`
 	CreatedAt          time.Time
-	ItemsetSatu        []ItemsetSatu        `gorm:"foreignKey:AprioriDataID"`
-	ItemsetDua         []ItemsetDua         `gorm:"foreignKey:AprioriDataID"`
-	ConfidenceItemset2 []ConfidenceItemset2 `gorm:"foreignKey:AprioriDataID"`
-	ItemsetTiga        []ItemsetTiga        `gorm:"foreignKey:AprioriDataID"`
-	ConfidenceItemset3 []ConfidenceItemset3 `gorm:"foreignKey:AprioriDataID"`
-	RuleAssociation    []RuleAssociation    `gorm:"foreignKey:AprioriDataID"`
+	ItemsetSatu        []ItemsetSatu        `gorm:"foreignKey:AprioriDataID;constraint:OnDelete:CASCADE"`
+	ItemsetDua         []ItemsetDua         `gorm:"foreignKey:AprioriDataID;constraint:OnDelete:CASCADE"`
+	ConfidenceItemset2 []ConfidenceItemset2 `gorm:"foreignKey:AprioriDataID;constraint:OnDelete:CASCADE"`
+	ItemsetTiga        []ItemsetTiga        `gorm:"foreignKey:AprioriDataID;constraint:OnDelete:CASCADE"`
+	ConfidenceItemset3 []ConfidenceItemset3 `gorm:"foreignKey:AprioriDataID;constraint:OnDelete:CASCADE"`
+	RuleAssociation    []RuleAssociation    `gorm:"foreignKey:AprioriDataID;constraint:OnDelete:CASCADE"`
 }
 
 // Memproses data transaksi dan menyimpannya ke struct AprioriData
@@ -36,6 +36,7 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 	r.MinSupport = request.MinSup
 	r.MinConfidence = request.MinConf
 	var itemsetSatuID, itemsetDuaID, itemsetTigaID, ruleAssociationID, confidenceItemset2ID, confidenceItemset3ID uuid.UUID
+	var ruleAssociation2, ruleAssociation3 []RuleAssociation
 	for _, record := range apriori {
 		if len(record.GetSupportRecord().GetItems()) > 3 {
 			continue
@@ -98,7 +99,7 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 				} else {
 					explanation = "Negatif"
 				}
-				r.RuleAssociation = append(r.RuleAssociation, RuleAssociation{
+				ruleAssociation2 = append(ruleAssociation2, RuleAssociation{
 					ID:            ruleAssociationID.String(),
 					Name:          strings.Join(statistic.GetBase(), ",") + " -> " + strings.Join(statistic.GetAdd(), ","),
 					Confidence:    statistic.GetConfidence(),
@@ -148,7 +149,7 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 				} else {
 					explanation = "Negatif"
 				}
-				r.RuleAssociation = append(r.RuleAssociation, RuleAssociation{
+				ruleAssociation3 = append(ruleAssociation3, RuleAssociation{
 					ID:            ruleAssociationID.String(),
 					Name:          strings.Join(statistic.GetBase(), ",") + " -> " + strings.Join(statistic.GetAdd(), ","),
 					Confidence:    statistic.GetConfidence(),
@@ -158,6 +159,11 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 				})
 			}
 		}
+	}
+	if len(ruleAssociation3) == 0 {
+		r.RuleAssociation = ruleAssociation2
+	} else {
+		r.RuleAssociation = ruleAssociation3
 	}
 	return r
 }

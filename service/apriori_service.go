@@ -9,4 +9,5 @@ type AprioriService interface {
 	DeleteByID(id string) error
 	GetRecommendationItem() (*web.RecommendationItemResponse, error)
 	CreateRecommendationItem() error
+	DeleteAll() error
 }

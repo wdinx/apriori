@@ -93,3 +93,11 @@ func (controller *AprioriControllerImpl) CreateRecommendationItem(c echo.Context
 	}
 	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("Success", nil))
 }
+
+func (controller *AprioriControllerImpl) DeleteAll(c echo.Context) error {
+	err := controller.aprioriService.DeleteAll()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse(err.Error()))
+	}
+	return c.JSON(http.StatusOK, web.NewBaseSuccessResponse("Success", nil))
+}

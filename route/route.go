@@ -66,6 +66,7 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	e.GET("/apriori", aprioriController.GetAll)
 	e.GET("/apriori/:id", aprioriController.GetByID)
 	e.DELETE("/apriori/:id", aprioriController.DeleteByID)
+	e.DELETE("/apriori", aprioriController.DeleteAll)
 
 	// Recommendation
 	e.GET("/recommendations", aprioriController.GetRecommendationItem)

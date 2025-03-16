@@ -161,3 +161,11 @@ func (service *AprioriServiceImpl) CreateRecommendationItem() error {
 	}
 	return nil
 }
+
+// Menghapus semua data hasil apriori
+func (service *AprioriServiceImpl) DeleteAll() error {
+	if err := service.aprioriRepository.DeleteAll(); err != nil {
+		return err
+	}
+	return nil
+}

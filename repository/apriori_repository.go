@@ -10,4 +10,5 @@ type AprioriRepository interface {
 	Create(apriori *domain.AprioriData) error
 	GetByID(id string) (*domain.AprioriData, error)
 	Delete(id string) error
+	DeleteAll() error
 }

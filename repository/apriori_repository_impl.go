@@ -52,3 +52,11 @@ func (r *AprioriRepositoryImpl) Delete(id string) error {
 	}
 	return nil
 }
+
+// Menghapus semua data hasil apriori dari database
+func (r *AprioriRepositoryImpl) DeleteAll() error {
+	if err := r.db.Exec("DELETE FROM apriori_data").Error; err != nil {
+		return errors.New("Error When Deleting All Apriori Result")
+	}
+	return nil
+}
