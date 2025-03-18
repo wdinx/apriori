@@ -51,7 +51,8 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 		for _, value := range newColumn {
 			split := strings.Split(value, ",")
 			for _, s := range split {
-				newColumn = append(newColumn, s)
+				data := strings.Replace(s, " ", "", -1)
+				newColumn = append(newColumn, data)
 			}
 		}
 		transaction = append(transaction, newColumn)

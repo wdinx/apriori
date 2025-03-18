@@ -42,8 +42,6 @@ func (r *AprioriData) ProceedData(apriori []Apriori.RelationRecord, request *web
 			continue
 		}
 
-		fmt.Print(record.GetSupportRecord().GetSupport())
-
 		totalTransaction := countExactMatches(transactionData, record.GetSupportRecord().GetItems())
 		switch {
 		case len(record.GetSupportRecord().GetItems()) == 1:
