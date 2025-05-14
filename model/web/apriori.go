@@ -46,7 +46,7 @@ type AprioriBaseResponse struct {
 
 func (r *AprioriBaseResponse) GetRecommendation(data *AprioriBaseResponse) *AprioriBaseResponse {
 	var recommendation string
-	var support float64
+	var support string
 
 	if len(data.ItemsetSatu) == 0 && len(data.ItemsetDua) == 0 && len(data.ItemsetTiga) == 0 {
 		data.HighestSupport = ""

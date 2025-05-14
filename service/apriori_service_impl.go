@@ -29,11 +29,12 @@ func NewAprioriService(transactionRepository repository.TransactionRepository, a
 
 // Melakukan proses apriori berdasarkan request dari user
 func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequest) (*web.AprioriBaseResponse, error) {
-	if err := service.validator.Struct(request); err != nil {
+	var err error
+	if err = service.validator.Struct(request); err != nil {
 		return nil, err
 	}
 
-	// Mengambil data transaksi berdasarkan request dari user
+	//Mengambil data transaksi berdasarkan request dari user
 	result, err := service.transactionRepository.FindByDateRange(request.DateStart, request.DateEnd)
 	if err != nil {
 		return nil, err
@@ -47,16 +48,19 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 
 	// Memasukkan data transaksi ke variabel transaction
 	for _, column := range *result {
-		newColumn := strings.Split(column.Items, ",")
-		for _, value := range newColumn {
-			split := strings.Split(value, ",")
-			for _, s := range split {
-				data := strings.Replace(s, " ", "", -1)
-				newColumn = append(newColumn, data)
-			}
+		// Pisahkan berdasarkan koma
+		items := strings.Split(column.Items, ",")
+
+		var cleanedItems []string
+		for _, item := range items {
+			// Hapus spasi jika ada
+			data := strings.ReplaceAll(item, " ", "")
+			cleanedItems = append(cleanedItems, data)
 		}
-		transaction = append(transaction, newColumn)
+
+		transaction = append(transaction, cleanedItems)
 	}
+	fmt.Println(transaction)
 
 	// Melakukan proses apriori terhadap data transaction
 	// Set nilai min support dan min confidence berdasarkan request user

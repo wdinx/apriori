@@ -180,7 +180,7 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 		response.ItemsetSatu = append(response.ItemsetSatu, web.ItemsetSatu{
 			Name:        strings.Split(data.Name, ","),
 			Count:       data.Count,
-			Support:     math.Round(data.Support*100) / 100,
+			Support:     FloatToPercent(data.Support),
 			Explanation: data.Explanation,
 		})
 	}
@@ -189,7 +189,7 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 		response.ItemsetDua = append(response.ItemsetDua, web.ItemsetDua{
 			Name:        strings.Split(data.Name, ","),
 			Count:       data.Count,
-			Support:     math.Round(data.Support*100) / 100,
+			Support:     FloatToPercent(data.Support),
 			Explanation: data.Explanation,
 		})
 	}
@@ -197,8 +197,8 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 	for _, data := range r.ConfidenceItemset2 {
 		response.ConfidenceItemset2 = append(response.ConfidenceItemset2, web.ConfidenceItemset2{
 			Name:        strings.Split(data.Name, ","),
-			Support:     math.Round(data.Support*100) / 100,
-			Confidence:  math.Round(data.Confidence*100) / 100,
+			Support:     FloatToPercent(data.Support),
+			Confidence:  FloatToPercent(data.Confidence),
 			Explanation: data.Explanation,
 		})
 	}
@@ -207,7 +207,7 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 		response.ItemsetTiga = append(response.ItemsetTiga, web.ItemsetTiga{
 			Name:        strings.Split(data.Name, ","),
 			Count:       data.Count,
-			Support:     math.Round(data.Support*100) / 100,
+			Support:     FloatToPercent(data.Support),
 			Explanation: data.Explanation,
 		})
 	}
@@ -215,8 +215,8 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 	for _, data := range r.ConfidenceItemset3 {
 		response.ConfidenceItemset3 = append(response.ConfidenceItemset3, web.ConfidenceItemset3{
 			Name:        strings.Split(data.Name, ","),
-			Support:     math.Round(data.Support*100) / 100,
-			Confidence:  math.Round(data.Confidence*100) / 100,
+			Support:     FloatToPercent(data.Support),
+			Confidence:  FloatToPercent(data.Confidence),
 			Explanation: data.Explanation,
 		})
 	}
@@ -224,7 +224,7 @@ func (r *AprioriData) ToResponse() *web.AprioriBaseResponse {
 	for _, data := range r.RuleAssociation {
 		response.RuleAssociation = append(response.RuleAssociation, web.RuleAssociation{
 			Name:        data.Name,
-			Confidence:  math.Round(data.Confidence*100) / 100,
+			Confidence:  FloatToPercent(data.Confidence),
 			LiftRatio:   math.Round(data.LiftRatio*100) / 100,
 			Explanation: data.Explanation,
 		})
