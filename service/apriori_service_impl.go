@@ -5,10 +5,11 @@ import (
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
 	"fmt"
-	Apriori "github.com/eMAGTechLabs/go-apriori"
-	"github.com/go-playground/validator/v10"
 	"strings"
 	"time"
+
+	Apriori "github.com/eMAGTechLabs/go-apriori"
+	"github.com/go-playground/validator/v10"
 )
 
 type AprioriServiceImpl struct {
@@ -131,7 +132,7 @@ func (service *AprioriServiceImpl) CreateRecommendationItem() error {
 	}
 
 	if len(*result) == 0 {
-		return fmt.Errorf("Data Not Found")
+		return fmt.Errorf("Tidak ada data transaksi dalam dua bulan terakhir")
 	}
 
 	var transaction [][]string
