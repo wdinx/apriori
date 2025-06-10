@@ -137,15 +137,19 @@ func (service *AprioriServiceImpl) CreateRecommendationItem() error {
 	var transaction [][]string
 
 	for _, column := range *result {
-		newColumn := strings.Split(column.Items, ",")
-		for _, value := range newColumn {
-			split := strings.Split(value, ",")
-			for _, s := range split {
-				newColumn = append(newColumn, s)
-			}
+		// Pisahkan berdasarkan koma
+		items := strings.Split(column.Items, ",")
+
+		var cleanedItems []string
+		for _, item := range items {
+			// Hapus spasi jika ada
+			data := strings.ReplaceAll(item, " ", "")
+			cleanedItems = append(cleanedItems, data)
 		}
-		transaction = append(transaction, newColumn)
+
+		transaction = append(transaction, cleanedItems)
 	}
+	fmt.Println(transaction)
 
 	option := Apriori.NewOptions(0.1, 0.1, 0., 0.)
 	apriori := Apriori.NewApriori(transaction[1:])
