@@ -6,9 +6,10 @@ import (
 	"apriori-backend/repository"
 	"apriori-backend/service"
 	"apriori-backend/util"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 type AprioriControllerImpl struct {
