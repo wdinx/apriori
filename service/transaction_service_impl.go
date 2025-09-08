@@ -3,18 +3,22 @@ package service
 import (
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
+	"apriori-backend/util"
 	"apriori-backend/util/converter"
+	"errors"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type TransactionServiceImpl struct {
 	transactionRepository repository.TransactionRepository
+	productRepository     repository.ProductRepository
 	validator             *validator.Validate
 }
 
-func NewTransactionService(transactionRepository repository.TransactionRepository, validator *validator.Validate) TransactionService {
-	return &TransactionServiceImpl{transactionRepository: transactionRepository, validator: validator}
+func NewTransactionService(transactionRepository repository.TransactionRepository, productRepository repository.ProductRepository, validator *validator.Validate) TransactionService {
+	return &TransactionServiceImpl{transactionRepository: transactionRepository, productRepository: productRepository, validator: validator}
 }
 
 // Melakukan request ke repository untuk membuat transaksi dan mengirimnya ke kontroller
@@ -22,6 +26,35 @@ func (service *TransactionServiceImpl) Create(request *web.CreateTransactionRequ
 	if err := service.validator.Struct(request); err != nil {
 		return err
 	}
+
+	dataString := strings.ReplaceAll(request.Items, " ", "")
+	newData := strings.Split(dataString, ",")
+
+	replacedData := util.RemoveDuplicate(newData)
+	request.Items = strings.Join(replacedData, ",")
+
+	counter := make(map[string]int)
+
+	for _, item := range newData {
+		counter[item]++
+	}
+
+	for key, value := range counter {
+
+		items, err := service.productRepository.FindByName(key)
+		if err != nil {
+			return err
+		}
+
+		if items.Stock < value {
+			return errors.New("Item Tidak Cukup di Database")
+		}
+
+		if err = service.productRepository.UpdateStock(key, value); err != nil {
+			return err
+		}
+	}
+
 	if err := service.transactionRepository.Create(converter.CreateToTransactionModel(request)); err != nil {
 		return err
 	}
@@ -84,6 +117,38 @@ func (service *TransactionServiceImpl) InsertByExcel(request *web.InsertByExcelR
 	if err != nil {
 		return err
 	}
+
+	// Update Stock
+	counter := make(map[string]int)
+	for _, data := range *transaction {
+		data.Items = strings.ReplaceAll(data.Items, " ", "")
+		newData := strings.Split(data.Items, ",")
+
+		replacedData := util.RemoveDuplicate(newData)
+		data.Items = strings.Join(replacedData, ",")
+
+		for _, item := range newData {
+			counter[item]++
+		}
+
+	}
+
+	for key, value := range counter {
+		// Cari di database
+		items, err := service.productRepository.FindByName(key)
+		if err != nil {
+			return err
+		}
+
+		if items.Stock < value {
+			return errors.New("Item Tidak Cukup di Database")
+		}
+
+		if err = service.productRepository.UpdateStock(key, value); err != nil {
+			return err
+		}
+	}
+
 	if err = service.transactionRepository.InsertByExcel(transaction); err != nil {
 		return err
 	}

@@ -66,3 +66,17 @@ func (repository *ProductRepositoryImpl) GetTotalPage(model any, limit int) (tot
 	}
 	return int(totalData), err
 }
+
+func (repository *ProductRepositoryImpl) UpdateStock(itemName string, stock int) error {
+	if err := repository.db.Model(&domain.Product{}).Where("name = ?", itemName).Update("stock", gorm.Expr("stock - ?", stock)).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository *ProductRepositoryImpl) FindByName(name string) (product *domain.Product, err error) {
+	if err = repository.db.First(&product, "name LIKE ?", name).Error; err != nil {
+		return nil, err
+	}
+	return product, err
+}

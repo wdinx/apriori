@@ -12,4 +12,6 @@ type ProductRepository interface {
 	Update(product *domain.Product) error
 	Delete(id int) error
 	GetTotalPage(model any, limit int) (int, error)
+	UpdateStock(itemName string, stock int) error
+	FindByName(name string) (*domain.Product, error)
 }

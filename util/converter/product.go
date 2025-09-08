@@ -10,6 +10,7 @@ func CreateToProductModel(product *web.ProductCreateRequest, filename string) *d
 		Name:  product.Name,
 		Price: product.Price,
 		Image: filename,
+		Stock: product.Stock,
 	}
 }
 
@@ -19,6 +20,7 @@ func UpdateToProductModel(product *web.ProductUpdateRequest, filename string) *d
 		Name:  product.Name,
 		Price: product.Price,
 		Image: filename,
+		Stock: product.Stock,
 	}
 }
 
@@ -28,5 +30,6 @@ func ToProductResponse(product *domain.Product) *web.ProductResponse {
 		Name:  product.Name,
 		Price: product.Price,
 		Image: product.Image,
+		Stock: product.Stock,
 	}
 }

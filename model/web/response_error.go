@@ -7,7 +7,7 @@ type ErrorResponse struct {
 
 func NewBaseErrorResponse(message string) *ErrorResponse {
 	return &ErrorResponse{
-		Error:   true,
+		Error:   false,
 		Message: message,
 	}
 }

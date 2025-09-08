@@ -6,6 +6,7 @@ type ProductCreateRequest struct {
 	Name  string                `form:"name" validate:"required,min=1,max=200"`
 	Price int                   `form:"price" validate:"required,min=1"`
 	Image *multipart.FileHeader `form:"image"`
+	Stock int                   `form:"stock" validate:"required,min=1"`
 }
 
 type ProductUpdateRequest struct {
@@ -13,6 +14,7 @@ type ProductUpdateRequest struct {
 	Name  string                `form:"name" validate:"required,min=1,max=200"`
 	Price int                   `form:"price" validate:"required,min=1"`
 	Image *multipart.FileHeader `form:"image"`
+	Stock int                   `form:"stock" validate:"required,min=1"`
 }
 
 type ProductResponse struct {
@@ -20,4 +22,5 @@ type ProductResponse struct {
 	Name  string `json:"name"`
 	Price int    `json:"price"`
 	Image string `json:"image"`
+	Stock int    `json:"stock"`
 }
