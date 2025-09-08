@@ -5,10 +5,11 @@ import (
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
 	"fmt"
-	Apriori "github.com/eMAGTechLabs/go-apriori"
-	"github.com/go-playground/validator/v10"
 	"strings"
 	"time"
+
+	Apriori "github.com/eMAGTechLabs/go-apriori"
+	"github.com/go-playground/validator/v10"
 )
 
 type AprioriServiceImpl struct {
@@ -60,7 +61,6 @@ func (service *AprioriServiceImpl) ProcessApriori(request *web.CreateAprioriRequ
 
 		transaction = append(transaction, cleanedItems)
 	}
-	fmt.Println(transaction)
 
 	// Melakukan proses apriori terhadap data transaction
 	// Set nilai min support dan min confidence berdasarkan request user
@@ -95,6 +95,8 @@ func (service *AprioriServiceImpl) GetAll(metadata *web.Metadata) (*[]web.Aprior
 // Mengambil data hasil apriori berdasarkan id di database
 func (service *AprioriServiceImpl) GetByID(id string) (*web.AprioriBaseResponse, error) {
 	apriori, err := service.aprioriRepository.GetByID(id)
+	fmt.Println("Disini")
+
 	if err != nil {
 		return nil, err
 	}
@@ -114,6 +116,9 @@ func (service *AprioriServiceImpl) GetRecommendationItem() (*web.RecommendationI
 	if err != nil {
 		return nil, err
 	}
+	if *&recommendationRepository.Name == "" {
+		return nil, fmt.Errorf("Tidak ada data transaksi dalam dua bulan terakhir")
+	}
 	return recommendationRepository.ToResponse(recommendationRepository.Name), nil
 }
 
@@ -131,7 +136,7 @@ func (service *AprioriServiceImpl) CreateRecommendationItem() error {
 	}
 
 	if len(*result) == 0 {
-		return fmt.Errorf("Data Not Found")
+		return fmt.Errorf("Tidak ada data transaksi dalam dua bulan terakhir")
 	}
 
 	var transaction [][]string
@@ -158,13 +163,16 @@ func (service *AprioriServiceImpl) CreateRecommendationItem() error {
 	fmt.Println(aprioriResult)
 
 	var recommendation domain.RecommendationItem
+	var highestSupport float64
 	for i := 1; i < len(aprioriResult); i++ {
-		if aprioriResult[i].GetSupportRecord().GetSupport() > aprioriResult[i-1].GetSupportRecord().GetSupport() {
+		highestSupport = aprioriResult[i-1].GetSupportRecord().GetSupport()
+		if aprioriResult[i].GetSupportRecord().GetSupport() >= highestSupport {
+			highestSupport = aprioriResult[i].GetSupportRecord().GetSupport()
 			recommendation.Name = strings.Join(aprioriResult[i].GetSupportRecord().GetItems(), ",")
-			continue
+			fmt.Println(highestSupport)
 		}
-		recommendation.Name = strings.Join(aprioriResult[i-1].GetSupportRecord().GetItems(), ",")
 	}
+	fmt.Println("Fungsi Terpanggil")
 	if err = service.recommendationRepository.Create(&recommendation); err != nil {
 		return err
 	}

@@ -1,6 +1,10 @@
 package web
 
-import "strings"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 type CreateAprioriRequest struct {
 	DateStart string  `json:"date_start" form:"date_start" validate:"required"`
@@ -46,7 +50,7 @@ type AprioriBaseResponse struct {
 
 func (r *AprioriBaseResponse) GetRecommendation(data *AprioriBaseResponse) *AprioriBaseResponse {
 	var recommendation string
-	var support string
+	var support int
 
 	if len(data.ItemsetSatu) == 0 && len(data.ItemsetDua) == 0 && len(data.ItemsetTiga) == 0 {
 		data.HighestSupport = ""
@@ -54,36 +58,56 @@ func (r *AprioriBaseResponse) GetRecommendation(data *AprioriBaseResponse) *Apri
 	}
 	if len(data.ItemsetSatu) >= 0 {
 		recommendation = strings.Join(data.ItemsetSatu[0].Name, ",")
-		support = data.ItemsetSatu[0].Support
+		support = ParsePercent(data.ItemsetSatu[0].Support)
 	}
 
-	if len(data.ItemsetSatu) >= 0 {
+	if len(data.ItemsetSatu) >= 1 {
 		for i := 1; i < len(data.ItemsetSatu); i++ {
-			if support < data.ItemsetSatu[i].Support {
-				support = data.ItemsetSatu[i].Support
+			newData := ParsePercent(data.ItemsetSatu[i].Support)
+			if support < newData {
+				support = newData
 				recommendation = strings.Join(data.ItemsetSatu[i].Name, ",")
+			} else if support == newData {
+				newString := strings.Join(data.ItemsetSatu[i].Name, ",")
+				recommendation = fmt.Sprintf("%s, %s", recommendation, newString)
 			}
 		}
 	}
 
 	if len(data.ItemsetDua) >= 0 {
 		for i := 0; i < len(data.ItemsetDua); i++ {
-			if support < data.ItemsetDua[i].Support {
-				support = data.ItemsetDua[i].Support
+			newData := ParsePercent(data.ItemsetDua[i].Support)
+			if support < newData {
+				support = newData
 				recommendation = strings.Join(data.ItemsetDua[i].Name, ",")
+			} else if support == newData {
+				newString := strings.Join(data.ItemsetDua[i].Name, ",")
+				recommendation = fmt.Sprintf("%s, %s", recommendation, newString)
 			}
 		}
 	}
 
 	if len(data.ItemsetTiga) >= 0 {
 		for i := 0; i < len(data.ItemsetTiga); i++ {
-			if support < data.ItemsetTiga[i].Support {
-				support = data.ItemsetTiga[i].Support
+			newData := ParsePercent(data.ItemsetTiga[i].Support)
+			if support < newData {
+				support = newData
 				recommendation = strings.Join(data.ItemsetTiga[i].Name, ",")
+			} else if support == newData {
+				newString := strings.Join(data.ItemsetTiga[i].Name, ",")
+				recommendation = fmt.Sprintf("%s, %s", recommendation, newString)
 			}
 		}
 	}
 
 	data.HighestSupport = recommendation
 	return data
+}
+
+func ParsePercent(s string) int {
+	trimmed := strings.TrimSuffix(s, "%")
+
+	value, _ := strconv.Atoi(trimmed)
+
+	return value
 }
