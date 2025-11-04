@@ -6,6 +6,7 @@ import (
 	"apriori-backend/repository"
 	"apriori-backend/service"
 	"apriori-backend/util"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -81,6 +82,7 @@ func (controller *AprioriControllerImpl) DeleteByID(c echo.Context) error {
 
 func (controller *AprioriControllerImpl) GetRecommendationItem(c echo.Context) error {
 	result, err := controller.aprioriService.GetRecommendationItem()
+	fmt.Println(result)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, web.NewBaseErrorResponse(err.Error()))
 	}

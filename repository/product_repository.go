@@ -14,4 +14,5 @@ type ProductRepository interface {
 	GetTotalPage(model any, limit int) (int, error)
 	UpdateStock(itemName string, stock int) error
 	FindByName(name string) (*domain.Product, error)
+	FindByLowestStock() (*domain.Product, error)
 }

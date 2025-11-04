@@ -14,6 +14,6 @@ type RecommendationItem struct {
 
 func (r *RecommendationItem) ToResponse(data string) *web.RecommendationItemResponse {
 	return &web.RecommendationItemResponse{
-		Message: fmt.Sprintf("Merekomendasikan %s untuk distok!", data),
+		Message: fmt.Sprintf("Item %s ", data),
 	}
 }

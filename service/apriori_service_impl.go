@@ -5,25 +5,25 @@ import (
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
 	"fmt"
-	"strings"
-	"time"
-
 	Apriori "github.com/eMAGTechLabs/go-apriori"
 	"github.com/go-playground/validator/v10"
+	"strings"
 )
 
 type AprioriServiceImpl struct {
 	transactionRepository    repository.TransactionRepository
 	aprioriRepository        repository.AprioriRepository
+	productRepository        repository.ProductRepository
 	recommendationRepository repository.RecommendationRepository
 	validator                *validator.Validate
 }
 
-func NewAprioriService(transactionRepository repository.TransactionRepository, aprioriRepository repository.AprioriRepository, recommendationRepository repository.RecommendationRepository, validator *validator.Validate) AprioriService {
+func NewAprioriService(transactionRepository repository.TransactionRepository, productRepository repository.ProductRepository, aprioriRepository repository.AprioriRepository, recommendationRepository repository.RecommendationRepository, validator *validator.Validate) AprioriService {
 	return &AprioriServiceImpl{
 		transactionRepository:    transactionRepository,
 		aprioriRepository:        aprioriRepository,
 		recommendationRepository: recommendationRepository,
+		productRepository:        productRepository,
 		validator:                validator,
 	}
 }
@@ -117,62 +117,23 @@ func (service *AprioriServiceImpl) GetRecommendationItem() (*web.RecommendationI
 		return nil, err
 	}
 	if *&recommendationRepository.Name == "" {
-		return nil, fmt.Errorf("Tidak ada data transaksi dalam dua bulan terakhir")
+		return nil, fmt.Errorf("Tidak ada data rekomendasi item")
 	}
 	return recommendationRepository.ToResponse(recommendationRepository.Name), nil
 }
 
 // Membuat rekomendasi item berdasarkan nilai supportnya
 func (service *AprioriServiceImpl) CreateRecommendationItem() error {
-	dateEnd, err := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
-	fmt.Println(dateEnd.String())
+	productLowestStock, err := service.productRepository.FindByLowestStock()
 	if err != nil {
-		return err
+		fmt.Println("Jalan")
+		return fmt.Errorf("Gagal mengambil data produk dengan stok terendah: %v", err)
 	}
-	dateStart := dateEnd.AddDate(0, -2, 0)
-	result, err := service.transactionRepository.FindByDateRange(dateStart.String(), dateEnd.String())
-	if err != nil {
-		return err
-	}
-
-	if len(*result) == 0 {
-		return fmt.Errorf("Tidak ada data transaksi dalam dua bulan terakhir")
-	}
-
-	var transaction [][]string
-
-	for _, column := range *result {
-		// Pisahkan berdasarkan koma
-		items := strings.Split(column.Items, ",")
-
-		var cleanedItems []string
-		for _, item := range items {
-			// Hapus spasi jika ada
-			data := strings.ReplaceAll(item, " ", "")
-			cleanedItems = append(cleanedItems, data)
-		}
-
-		transaction = append(transaction, cleanedItems)
-	}
-	fmt.Println(transaction)
-
-	option := Apriori.NewOptions(0.1, 0.1, 0., 0.)
-	apriori := Apriori.NewApriori(transaction[1:])
-	aprioriResult := apriori.Calculate(option)
-
-	fmt.Println(aprioriResult)
 
 	var recommendation domain.RecommendationItem
-	var highestSupport float64
-	for i := 1; i < len(aprioriResult); i++ {
-		highestSupport = aprioriResult[i-1].GetSupportRecord().GetSupport()
-		if aprioriResult[i].GetSupportRecord().GetSupport() >= highestSupport {
-			highestSupport = aprioriResult[i].GetSupportRecord().GetSupport()
-			recommendation.Name = strings.Join(aprioriResult[i].GetSupportRecord().GetItems(), ",")
-			fmt.Println(highestSupport)
-		}
-	}
-	fmt.Println("Fungsi Terpanggil")
+	recommendation.Name = *&productLowestStock.Name + " tersisa " + fmt.Sprint(productLowestStock.Stock)
+	fmt.Println(recommendation.Name)
+
 	if err = service.recommendationRepository.Create(&recommendation); err != nil {
 		return err
 	}

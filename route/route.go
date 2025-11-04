@@ -27,7 +27,7 @@ func InitRoute(db *gorm.DB, e *echo.Echo, validate *validator.Validate, config *
 	imageService := service.NewImageService(imageRepository)
 	productService := service.NewProductService(productRepository, imageService, validate)
 	transactionService := service.NewTransactionService(transactionRepository, productRepository, validate)
-	aprioriService := service.NewAprioriService(transactionRepository, aprioriRepository, recommendationRepository, validate)
+	aprioriService := service.NewAprioriService(transactionRepository, productRepository, aprioriRepository, recommendationRepository, validate)
 	gocronService := service.NewCronJobServiceImpl(aprioriService, scheduler)
 
 	userController := controller.NewUserController(userService)

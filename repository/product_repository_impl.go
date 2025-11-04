@@ -80,3 +80,10 @@ func (repository *ProductRepositoryImpl) FindByName(name string) (product *domai
 	}
 	return product, err
 }
+
+func (repository *ProductRepositoryImpl) FindByLowestStock() (product *domain.Product, err error) {
+	if err = repository.db.Order("stock ASC").First(&product).Error; err != nil {
+		return nil, err
+	}
+	return product, err
+}
