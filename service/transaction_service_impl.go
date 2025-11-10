@@ -30,8 +30,7 @@ func (service *TransactionServiceImpl) Create(request *web.CreateTransactionRequ
 	dataString := strings.ReplaceAll(request.Items, " ", "")
 	newData := strings.Split(dataString, ",")
 
-	replacedData := util.RemoveDuplicate(newData)
-	request.Items = strings.Join(replacedData, ",")
+	request.Items = strings.Join(newData, ",")
 
 	counter := make(map[string]int)
 
