@@ -3,7 +3,6 @@ package service
 import (
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
-	"apriori-backend/util"
 	"apriori-backend/util/converter"
 	"errors"
 	"strings"
@@ -123,8 +122,7 @@ func (service *TransactionServiceImpl) InsertByExcel(request *web.InsertByExcelR
 		data.Items = strings.ReplaceAll(data.Items, " ", "")
 		newData := strings.Split(data.Items, ",")
 
-		replacedData := util.RemoveDuplicate(newData)
-		data.Items = strings.Join(replacedData, ",")
+		data.Items = strings.Join(newData, ",")
 
 		for _, item := range newData {
 			counter[item]++
