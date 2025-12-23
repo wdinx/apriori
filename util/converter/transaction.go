@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/xuri/excelize/v2"
+	"strings"
 	"time"
 )
 
@@ -40,6 +41,7 @@ func ToTransactionModelByExcel(r *web.InsertByExcelRequest) (*[]domain.Transacti
 	if err != nil {
 		return nil, errors.New("failed to open file")
 	}
+	defer file.Close()
 
 	xlsx, err := excelize.OpenReader(file)
 	if err != nil {
@@ -52,20 +54,32 @@ func ToTransactionModelByExcel(r *web.InsertByExcelRequest) (*[]domain.Transacti
 	}
 
 	transactions := make([]domain.Transaction, 0)
-	fmt.Println(rows)
+
 	for i, row := range rows {
-		if i == 0 || len(row) != 2 {
+		// skip header
+		if i == 0 {
 			continue
 		}
-		fmt.Println(row)
-		date, err := time.Parse("01-02-06", row[0])
-		if err != nil {
-			return nil, errors.New("invalid date format")
+
+		// minimal 2 kolom
+		if len(row) < 2 {
+			continue
 		}
+
+		dateStr := strings.TrimSpace(row[0])
+		items := strings.TrimSpace(row[1])
+
+		// template: dd-mm-yy (12-01-25)
+		date, err := time.Parse("02-01-06", dateStr)
+		if err != nil {
+			return nil, fmt.Errorf("invalid date format at row %d: %s", i+1, dateStr)
+		}
+
 		transactions = append(transactions, domain.Transaction{
 			Date:  date,
-			Items: row[1],
+			Items: items,
 		})
 	}
+
 	return &transactions, nil
 }
