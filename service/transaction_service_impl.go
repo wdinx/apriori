@@ -1,6 +1,7 @@
 package service
 
 import (
+	"apriori-backend/model/domain"
 	"apriori-backend/model/web"
 	"apriori-backend/repository"
 	"apriori-backend/util/converter"
@@ -132,7 +133,8 @@ func (service *TransactionServiceImpl) InsertByExcel(request *web.InsertByExcelR
 
 	for key, value := range counter {
 		// Cari di database
-		items, err := service.productRepository.FindByName(key)
+		var items *domain.Product
+		items, err = service.productRepository.FindByName(key)
 		if err != nil {
 			return err
 		}

@@ -3,6 +3,8 @@ package repository
 import (
 	"apriori-backend/model/domain"
 	"apriori-backend/model/web"
+	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -74,8 +76,14 @@ func (repository *TransactionRepositoryImpl) GetALl() (*[]domain.Transaction, er
 
 // Menyimpan data transaksi ke dalam database berdasarkan file excel yang di input oleh User
 func (repository *TransactionRepositoryImpl) InsertByExcel(transaction *[]domain.Transaction) error {
-	if err := repository.db.Create(&transaction).Error; err != nil {
-		return err
+	err := repository.db.Create(&transaction).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			// handle data tidak ditemukan
+
+			return fmt.Errorf("Data yang diinput tidak ditemukan") // atau buat product baru
+		}
+		return err // error database asli
 	}
 	return nil
 }

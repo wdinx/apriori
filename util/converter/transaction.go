@@ -70,8 +70,12 @@ func ToTransactionModelByExcel(r *web.InsertByExcelRequest) (*[]domain.Transacti
 		items := strings.TrimSpace(row[1])
 
 		// template: dd-mm-yy (12-01-25)
-		date, err := time.Parse("02-01-06", dateStr)
+		var date time.Time
+		date, err = time.Parse("02-01-06", dateStr)
 		if err != nil {
+			if date, err = time.Parse("01-02-06", dateStr); err != nil {
+				return nil, fmt.Errorf("invalid date format at row %d: %s", i+1, dateStr)
+			}
 			return nil, fmt.Errorf("invalid date format at row %d: %s", i+1, dateStr)
 		}
 
