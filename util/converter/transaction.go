@@ -76,7 +76,6 @@ func ToTransactionModelByExcel(r *web.InsertByExcelRequest) (*[]domain.Transacti
 			if date, err = time.Parse("01-02-06", dateStr); err != nil {
 				return nil, fmt.Errorf("invalid date format at row %d: %s", i+1, dateStr)
 			}
-			return nil, fmt.Errorf("invalid date format at row %d: %s", i+1, dateStr)
 		}
 
 		transactions = append(transactions, domain.Transaction{
