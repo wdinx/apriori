@@ -55,27 +55,44 @@ func ToTransactionModelByExcel(r *web.InsertByExcelRequest) (*[]domain.Transacti
 
 	transactions := make([]domain.Transaction, 0)
 
+	// supported date formats
+	dateLayouts := []string{
+		"02-01-06",   // dd-mm-yy
+		"02-01-2006", // dd-mm-yyyy
+		"01-02-06",   // mm-dd-yy
+		"01-02-2006", // mm-dd-yyyy
+	}
+
 	for i, row := range rows {
 		// skip header
 		if i == 0 {
 			continue
 		}
 
-		// minimal 2 kolom
-		if len(row) < 2 {
+		// skip baris kosong
+		if len(row) < 2 || strings.TrimSpace(row[0]) == "" {
 			continue
 		}
 
 		dateStr := strings.TrimSpace(row[0])
 		items := strings.TrimSpace(row[1])
 
-		// template: dd-mm-yy (12-01-25)
 		var date time.Time
-		date, err = time.Parse("02-01-06", dateStr)
-		if err != nil {
-			if date, err = time.Parse("01-02-06", dateStr); err != nil {
-				return nil, fmt.Errorf("invalid date format at row %d: %s", i+1, dateStr)
+		var parseErr error
+
+		for _, layout := range dateLayouts {
+			date, parseErr = time.Parse(layout, dateStr)
+			if parseErr == nil {
+				break
 			}
+		}
+
+		if parseErr != nil {
+			return nil, fmt.Errorf(
+				"invalid date format at row %d: %s (expected dd-mm-yy / dd-mm-yyyy)",
+				i+1,
+				dateStr,
+			)
 		}
 
 		transactions = append(transactions, domain.Transaction{
